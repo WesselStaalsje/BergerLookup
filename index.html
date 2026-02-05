@@ -4,35 +4,221 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Berger lookup (postcode)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; }
-    .card { max-width: 720px; border: 1px solid #ddd; border-radius: 12px; padding: 16px; }
-    label { display:block; font-weight: 600; margin-bottom: 6px; }
-    input { width: 100%; padding: 10px 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 10px; }
-    .row { display:flex; gap: 10px; margin-top: 10px; align-items: center; }
-    button { padding: 10px 12px; border: 1px solid #ccc; background: #f7f7f7; border-radius: 10px; cursor: pointer; }
-    button:disabled { opacity: .5; cursor: not-allowed; }
-    .muted { color: #666; font-size: 13px; margin-top: 8px; }
-    .result { margin-top: 14px; padding: 12px; border-radius: 10px; background: #fafafa; border: 1px solid #eee; }
-    .kv { margin: 6px 0; }
-    .k { font-weight: 600; display:inline-block; width: 140px; }
-    .badge { display:inline-block; padding: 2px 8px; border-radius: 999px; border:1px solid #ddd; font-size: 12px; margin-left: 8px; }
-    .err { color: #b00020; }
+    :root{
+      --ve-yellow:#FFD200;
+      --ve-dark:#2B2B2B;
+      --ve-dark-2:#1F1F1F;
+      --ve-light:#F7F7F7;
+
+      --card:#FFFFFF;
+      --border:rgba(0,0,0,.12);
+      --muted:rgba(0,0,0,.55);
+      --shadow:0 10px 25px rgba(0,0,0,.08);
+      --shadow-soft:0 2px 8px rgba(0,0,0,.06);
+
+      --danger:#b00020;
+      --danger-bg:rgba(176,0,32,.08);
+      --danger-border:rgba(176,0,32,.22);
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:var(--ve-light);
+      color:var(--ve-dark);
+    }
+
+    .topbar{
+      background:var(--ve-dark);
+      color:#fff;
+      border-bottom:4px solid var(--ve-yellow);
+    }
+    .topbar-inner{
+      max-width: 920px;
+      margin:0 auto;
+      padding:16px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 0;
+    }
+    .brand-badge{
+      background:var(--ve-yellow);
+      color:var(--ve-dark);
+      font-weight:900;
+      border-radius:12px;
+      padding:6px 10px;
+      letter-spacing:.5px;
+      box-shadow: var(--shadow-soft);
+    }
+    .brand-title{
+      font-weight:900;
+      line-height:1.1;
+      font-size:16px;
+    }
+    .brand-sub{
+      font-size:12px;
+      opacity:.85;
+      margin-top:2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 520px;
+    }
+
+    .wrap{
+      max-width:920px;
+      margin:18px auto;
+      padding:0 16px 28px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px;
+      box-shadow: var(--shadow);
+    }
+
+    h2{
+      margin:0 0 12px 0;
+      font-size:20px;
+      font-weight:900;
+      letter-spacing:-0.2px;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+
+    input{
+      width:100%;
+      padding:12px 12px;
+      font-size:16px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      outline:none;
+      background:#fff;
+    }
+    input:focus{
+      border-color: rgba(0,0,0,.28);
+      box-shadow: 0 0 0 4px rgba(255,210,0,.35);
+    }
+
+    .row{
+      display:flex;
+      gap:12px;
+      margin-top:12px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    button{
+      padding:12px 14px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:900;
+      border:1px solid rgba(0,0,0,.10);
+      transition: transform .05s ease, filter .12s ease;
+    }
+    button:active{ transform: translateY(1px); }
+    button:disabled{ opacity:.55; cursor:not-allowed; }
+
+    /* Copy-knop = primary (geel) */
+    #btnCopy{
+      background: var(--ve-yellow);
+      color: var(--ve-dark);
+    }
+    #btnCopy:hover{ filter: brightness(.98); }
+
+    .muted{
+      color:var(--muted);
+      font-size:13px;
+      font-weight:600;
+    }
+
+    .result{
+      margin-top:14px;
+      padding:14px;
+      border-radius:14px;
+      background: rgba(255,210,0,.10);
+      border:1px dashed rgba(0,0,0,.18);
+    }
+    .kv{ margin:6px 0; }
+    .k{ font-weight:800; display:inline-block; width: 160px; color: rgba(0,0,0,.60); }
+
+    .badge{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      margin-left:8px;
+      background: var(--ve-dark);
+      color: var(--ve-yellow);
+      border:1px solid rgba(255,255,255,.08);
+      vertical-align: middle;
+    }
+
+    .err{
+      color: var(--danger);
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:800;
+    }
+
+    @media (max-width:560px){
+      .k{ width: 120px; }
+      .brand-sub{ max-width: 240px; }
+    }
   </style>
 </head>
+
 <body>
-  <div class="card">
-    <h2 style="margin:0 0 10px 0;">Berger opzoeken op postcode</h2>
-
-    <label for="pc">Postcode (bijv. 5735EM of 5735 EM)</label>
-    <input id="pc" inputmode="numeric" autocomplete="postal-code" placeholder="1234AB" />
-
-    <div class="row">
-      <button id="btnCopy" disabled>Copy resultaat</button>
-      <span class="muted">Gebaseerd op PC4-lijst (Jan 2026).</span>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-badge">VE</div>
+        <div>
+          <div class="brand-title">Berger lookup</div>
+          <div class="brand-sub">Postcode → regio + primaire berger (PC4-lijst Jan 2026)</div>
+        </div>
+      </div>
+      <div style="font-weight:900; opacity:.9;">Van Eijck</div>
     </div>
+  </div>
 
-    <div id="out" class="result" style="display:none;"></div>
+  <div class="wrap">
+    <div class="card">
+      <h2>Berger opzoeken op postcode</h2>
+
+      <label for="pc">Postcode (bijv. 5735EM of 5735 EM)</label>
+      <input id="pc" inputmode="numeric" autocomplete="postal-code" placeholder="1234AB" />
+
+      <div class="row">
+        <button id="btnCopy" disabled>Copy resultaat</button>
+        <span class="muted">Gebaseerd op PC4-lijst (Jan 2026).</span>
+      </div>
+
+      <div id="out" class="result" style="display:none;"></div>
+    </div>
   </div>
 
 <script>
