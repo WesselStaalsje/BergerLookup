@@ -123,3 +123,90 @@ export function getBergerByPostcode(postcode: string): BergerByPostcode | null {
     isWisselgebied: !!r.backup,
   };
 }
+
+
+// =========================
+// DE (PLZ 5) – Duitse bergers
+// Overlap toegestaan: functies geven alle matches terug.
+// =========================
+
+export type GermanBergerMatch = {
+  plz: string;              // 5 digits, preserved (e.g. "01000")
+  name: string;
+  standplaats: string;
+  phone: string;
+  coverage: string;         // e.g. "01000–01999"
+};
+
+const DE_BERGERS: Array<{
+  name: string;
+  standplaats: string;
+  phone: string;
+  ranges: Array<[start: number, end: number]>;
+}> = [
+  { name: "Wetterau Leipzig", standplaats: "Leipzig", phone: "+491704941738", ranges: [[4000, 4999], [6000, 6999], [8000, 8999]] },
+  { name: "Tobias Bissinger", standplaats: "Karlsruhe", phone: "+491718849717", ranges: [[76000, 76999], [75000, 75999], [67000, 67999], [68000, 68999]] },
+  { name: "Schleppi", standplaats: "Saarbrücken", phone: "+4915114522990", ranges: [[66000, 66999], [54000, 54999], [56000, 56999]] },
+  { name: "Rouven", standplaats: "Hannover", phone: "+491735954725", ranges: [[30000, 30999], [31000, 31999], [38000, 38999]] },
+  { name: "RIGRA", standplaats: "München", phone: "+4986627575", ranges: [[80000, 81999], [82000, 82999], [83000, 83999], [84000, 84999]] },
+  { name: "Ronald", standplaats: "Potsdam", phone: "+491721671306", ranges: [[14000, 14999], [10000, 13999], [16000, 16999]] },
+  { name: "Mario Haake / Wüst", standplaats: "Frankfurt am Main", phone: "+4915115087403", ranges: [[60000, 60999], [61000, 61999], [63000, 63999], [64000, 64999], [35000, 35999]] },
+  { name: "Finn", standplaats: "Viersen", phone: "+4917621119154", ranges: [[41000, 41999], [47000, 47999], [50000, 50999], [52000, 52999]] },
+  { name: "Fasold", standplaats: "München", phone: "+491707202999", ranges: [[80000, 81999], [82000, 82999], [83000, 83999], [84000, 84999]] },
+  { name: "Bröker (David)", standplaats: "Viersen", phone: "+4921629588851", ranges: [[41000, 41999], [47000, 47999], [50000, 50999], [52000, 52999]] },
+  { name: "Bott", standplaats: "Frankfurt (west)", phone: "+491704516981", ranges: [[60000, 60999], [61000, 61999], [63000, 63999], [55000, 55999]] },
+  { name: "Bohler Stephan", standplaats: "Zuid-Duitsland (mobiel)", phone: "+4917623705028", ranges: [[86000, 86999], [87000, 87999], [88000, 88999]] },
+  { name: "Berger Stuttgart", standplaats: "Stuttgart", phone: "+4915121971477", ranges: [[70000, 70999], [71000, 71999], [72000, 72999], [73000, 73999]] },
+  { name: "Auto-Walther (Bosch Service)", standplaats: "Dresden", phone: "+49352002500", ranges: [[1000, 1999], [2000, 2999], [9000, 9999]] },
+  { name: "Auge Thomas Abschleppdienst", standplaats: "Würzburg / Frankfurt / Nürnberg", phone: "+4915114012666", ranges: [[97000, 97999], [90000, 90999], [60000, 60999], [61000, 61999]] },
+  { name: "Andreas", standplaats: "Hamburg", phone: "+491794549014", ranges: [[20000, 21999], [21000, 22999], [23000, 23999]] },
+];
+
+function normalizeDePlz5(input: string): string | null {
+  const m = input.match(/\d{5}/);
+  return m ? m[0] : null;
+}
+
+export function lookupGermanBergersByPlz(postcodeOrPlz: string): GermanBergerMatch[] | null {
+  const plz = normalizeDePlz5(postcodeOrPlz);
+  if (!plz) return null;
+
+  const n = Number(plz); // "01000" -> 1000; comparisons still correct
+  if (!Number.isFinite(n)) return null;
+
+  const matches: GermanBergerMatch[] = [];
+
+  for (const b of DE_BERGERS) {
+    for (const [start, end] of b.ranges) {
+      if (n >= start && n <= end) {
+        matches.push({
+          plz,
+          name: b.name,
+          standplaats: b.standplaats,
+          phone: b.phone,
+          coverage: `${String(start).padStart(5, "0")}–${String(end).padStart(5, "0")}`,
+        });
+        break;
+      }
+    }
+  }
+
+  return matches.length ? matches : null;
+}
+
+// International wrapper:
+// - if input contains 5 digits: DE lookup (can return multiple matches)
+// - otherwise: NL lookup (single match)
+export type BergerLookupInternational =
+  | { country: "NL"; nl: BergerByPostcode }
+  | { country: "DE"; de: GermanBergerMatch[] };
+
+export function getBergerByPostcodeInternational(input: string): BergerLookupInternational | null {
+  const de = lookupGermanBergersByPlz(input);
+  if (de) return { country: "DE", de };
+
+  const nl = getBergerByPostcode(input);
+  if (nl) return { country: "NL", nl };
+
+  return null;
+}
