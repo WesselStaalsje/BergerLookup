@@ -125,6 +125,86 @@ export function getBergerByPostcode(postcode: string): BergerByPostcode | null {
 }
 
 
+
+// =========================
+// BE (PC4) – Belgische bergers (4 cijfers)
+// Let op: PC4 is hetzelfde formaat als NL, dus kies land expliciet in UI.
+// =========================
+
+export type BelgianBergerMatch = {
+  pc4: string; // 4 digits (e.g. "1000")
+  name: string;
+  backup?: string | null;
+  coverage: string; // e.g. "1000–1999"
+  note?: string;
+};
+
+const BE_RULES: Array<{
+  name: string;
+  ranges: Array<[start: number, end: number]>;
+}> = [
+  { name: "Degrave Middelkerke", ranges: [[8000, 8499], [8600, 8699]] },
+  { name: "Van Looy", ranges: [[7500, 7999], [8500, 8599], [8710, 8999]] },
+  { name: "MCT Verheye Depannage", ranges: [[8700, 8700], [9800, 9899]] },
+  { name: "Lybaert", ranges: [[9000, 9099], [9900, 9999]] },
+  { name: "Vercauteren", ranges: [[9100, 9299]] },
+  { name: "VDC depannage", ranges: [[2000, 2199], [2300, 2399], [2600, 2699], [2900, 2999]] },
+  { name: "Hamse Sleepdienst", ranges: [[2200, 2299], [2400, 2599], [2800, 2899], [3500, 3999]] },
+  { name: "Cronos Depannage", ranges: [[4000, 4699]] },
+  { name: "choffray depannage", ranges: [[4700, 4799], [4950, 4999]] },
+  { name: "Bayards depannage", ranges: [[4800, 4949]] },
+  { name: "Geen vaste berger (zwarte zone)", ranges: [[5500, 5599], [6600, 6999]] },
+  { name: "Jan De Plecker", ranges: [[1000, 1999], [3000, 3399], [5000, 5499], [5600, 6599], [7000, 7499], [9300, 9799]] },
+];
+
+// Backup (alleen bij nood) – Depannage Saint Jean (Frans)
+// Geldt uitsluitend voor deze sub-ranges (binnen Jan De Plecker gebied).
+const BE_BACKUP_SAINT_JEAN = {
+  name: "Depannage Saint Jean (backup, bij nood)",
+  ranges: [[6000, 6299], [7000, 7199]] as Array<[number, number]>,
+};
+
+function normalizeBePc4(input: string): string | null {
+  // accept "1000", "1000 AA", etc. We only take the 4 digits.
+  if (!input) return null;
+  const m = String(input).match(/\d{4}/);
+  return m ? m[0] : null;
+}
+
+export function lookupBelgianBerger(postcode: string): BelgianBergerMatch | null {
+  const pc4 = normalizeBePc4(postcode);
+  if (!pc4) return null;
+
+  const n = Number(pc4);
+  if (!Number.isFinite(n)) return null;
+
+  for (const rule of BE_RULES) {
+    for (const [start, end] of rule.ranges) {
+      if (n >= start && n <= end) {
+        let backup: string | null = null;
+
+        if (rule.name === "Jan De Plecker") {
+          for (const [bs, be] of BE_BACKUP_SAINT_JEAN.ranges) {
+            if (n >= bs && n <= be) {
+              backup = BE_BACKUP_SAINT_JEAN.name;
+              break;
+            }
+          }
+        }
+
+        return {
+          pc4,
+          name: rule.name,
+          backup,
+          coverage: `${String(start).padStart(4, "0")}–${String(end).padStart(4, "0")}`,
+        };
+      }
+    }
+  }
+
+  return null;
+}
+
 // =========================
 // DE (PLZ 5) – Duitse bergers
 // Overlap toegestaan: functies geven alle matches terug.
@@ -135,6 +215,7 @@ export type GermanBergerMatch = {
   name: string;
   standplaats: string;
   phone: string;
+  email?: string;
   coverage: string;         // e.g. "01000–01999"
 };
 
@@ -142,26 +223,58 @@ const DE_BERGERS: Array<{
   name: string;
   standplaats: string;
   phone: string;
+  email?: string;
   ranges: Array<[start: number, end: number]>;
 }> = [
   // Standplaats Schopsdorf (39291) — dekking ~75–100km (overlap toegestaan)
   { name: "Bergungsdienst Brameier Schopsdorf GmbH", standplaats: "Schopsdorf", phone: "+493922575013", ranges: [[39000, 39999], [10000, 13999], [14000, 14999], [6000, 6999]] },
+
+  // Bestaande DE-bergers
   { name: "Wetterau Leipzig", standplaats: "Leipzig", phone: "+491704941738", ranges: [[4000, 4999], [6000, 6999], [8000, 8999]] },
-  { name: "Tobias Bissinger", standplaats: "Karlsruhe", phone: "+491718849717", ranges: [[76000, 76999], [75000, 75999], [67000, 67999], [68000, 68999]] },
   { name: "Schleppi", standplaats: "Saarbrücken", phone: "+4915114522990", ranges: [[66000, 66999], [54000, 54999], [56000, 56999]] },
   { name: "Rouven", standplaats: "Hannover", phone: "+491735954725", ranges: [[30000, 30999], [31000, 31999], [38000, 38999]] },
-  { name: "RIGRA", standplaats: "München", phone: "+4986627575", ranges: [[80000, 81999], [82000, 82999], [83000, 83999], [84000, 84999]] },
   { name: "Ronald", standplaats: "Potsdam", phone: "+491721671306", ranges: [[14000, 14999], [10000, 13999], [16000, 16999]] },
-  { name: "Mario Haake / Wüst", standplaats: "Frankfurt am Main", phone: "+4915115087403", ranges: [[60000, 60999], [61000, 61999], [63000, 63999], [64000, 64999], [35000, 35999]] },
-  { name: "Finn", standplaats: "Viersen", phone: "+4917621119154", ranges: [[41000, 41999], [47000, 47999], [50000, 50999], [52000, 52999]] },
-  { name: "Fasold", standplaats: "München", phone: "+491707202999", ranges: [[80000, 81999], [82000, 82999], [83000, 83999], [84000, 84999]] },
-  { name: "Bröker (David)", standplaats: "Viersen", phone: "+4921629588851", ranges: [[41000, 41999], [47000, 47999], [50000, 50999], [52000, 52999]] },
-  { name: "Bott", standplaats: "Frankfurt (west)", phone: "+491704516981", ranges: [[60000, 60999], [61000, 61999], [63000, 63999], [55000, 55999]] },
-  { name: "Bohler Stephan", standplaats: "Zuid-Duitsland (mobiel)", phone: "+4917623705028", ranges: [[86000, 86999], [87000, 87999], [88000, 88999]] },
-  { name: "Berger Stuttgart", standplaats: "Stuttgart", phone: "+4915121971477", ranges: [[70000, 70999], [71000, 71999], [72000, 72999], [73000, 73999]] },
   { name: "Auto-Walther (Bosch Service)", standplaats: "Dresden", phone: "+49352002500", ranges: [[1000, 1999], [2000, 2999], [9000, 9999]] },
-  { name: "Auge Thomas Abschleppdienst", standplaats: "Würzburg / Frankfurt / Nürnberg", phone: "+4915114012666", ranges: [[97000, 97999], [90000, 90999], [60000, 60999], [61000, 61999]] },
   { name: "Andreas", standplaats: "Hamburg", phone: "+491794549014", ranges: [[20000, 21999], [21000, 22999], [23000, 23999]] },
+
+  // Zuid / Stuttgart / Karlsruhe
+  { name: "Tobias Bissinger", standplaats: "Karlsruhe", phone: "+491718849717", ranges: [[76000, 76999], [75000, 75999], [67000, 67999], [68000, 68999]] },
+  { name: "Auto-Bissinger GmbH", standplaats: "Pforzheim", phone: "+497231605010", email: "info@auto-bissinger.de", ranges: [[75000, 75999], [76000, 76999], [70000, 70999], [71000, 71999]] },
+  { name: "Berger Stuttgart", standplaats: "Stuttgart", phone: "+4915121971477", ranges: [[70000, 70999], [71000, 71999], [72000, 72999], [73000, 73999]] },
+  { name: "Bohler Stephan", standplaats: "Zuid-Duitsland (mobiel)", phone: "+4917623705028", ranges: [[86000, 86999], [87000, 87999], [88000, 88999]] },
+
+  // München (dubbel is ok; verschillende partners)
+  { name: "RIGRA", standplaats: "München", phone: "+4986627575", ranges: [[80000, 81999], [82000, 82999], [83000, 83999], [84000, 84999]] },
+  { name: "Fasold", standplaats: "München", phone: "+491707202999", ranges: [[80000, 81999], [82000, 82999], [83000, 83999], [84000, 84999]] },
+
+  // Frankfurt / West
+  { name: "Mario Haake / Wüst", standplaats: "Frankfurt am Main", phone: "+4915115087403", ranges: [[60000, 60999], [61000, 61999], [63000, 63999], [64000, 64999], [35000, 35999]] },
+  { name: "Bott", standplaats: "Frankfurt (west)", phone: "+491704516981", ranges: [[60000, 60999], [61000, 61999], [63000, 63999], [55000, 55999]] },
+  { name: "Abschleppdienst Meyer", standplaats: "Frankfurt am Main", phone: "+491715246237", email: "info@abschleppdienst-meyer.de", ranges: [[60000, 60999], [61000, 61999], [63000, 63999], [64000, 64999]] },
+
+  // NRW / Viersen
+  { name: "Finn", standplaats: "Viersen", phone: "+4917621119154", ranges: [[41000, 41999], [47000, 47999], [50000, 50999], [52000, 52999]] },
+
+  // Bröker (oude entry verwijderd; vervangen door deze met nieuw contact)
+  { name: "Abschleppdienst Bröker GmbH", standplaats: "Viersen", phone: "+492162658888", email: "Britta.Thill@abschleppdienst-broeker.de", ranges: [[41000, 41999], [47000, 47999], [50000, 50999], [52000, 52999]] },
+
+  // Münsterland
+  { name: "Automobile Krampe GmbH & Co. KG", standplaats: "Reken", phone: "+492362606260", email: "info@automobile-krampe.de", ranges: [[48000, 48999], [49000, 49999], [46000, 46999], [47000, 47999]] },
+
+  // Noord-Duitsland (Oldenburg omgeving)
+  { name: "Koopmann Kirchhatten", standplaats: "Hatten", phone: "+494482393", email: "info@koopmann-kfz.de", ranges: [[26000, 26999], [27000, 27999], [28000, 28999]] },
+
+  // Rheinland-Pfalz / Eifel
+  { name: "Lenz Abschleppdienst Adenau e.K.", standplaats: "Adenau", phone: "+4926919380770", email: "info@abschleppdienst-adenau.de", ranges: [[53000, 53999], [54000, 54999], [56000, 56999]] },
+
+  // Sachsen-Anhalt
+  { name: "Swientek & Gläser GmbH", standplaats: "Weißenfels", phone: "+493443302074", email: "Info@swientek-glaeser.de", ranges: [[6000, 6999]] },
+
+  // Sauerland
+  { name: "Abschleppdienst Kruger GmbH", standplaats: "Anröchte", phone: "+4929479759614", email: "info@abschleppdienst-krueger.de", ranges: [[59000, 59999], [57000, 57999], [58000, 58999]] },
+
+  // Auge (oude entry vervangen door deze met nieuw contact)
+  { name: "Auge Abschleppservice", standplaats: "Kist", phone: "+49930690600", email: "s.heyd@auge-service.de", ranges: [[97000, 97999], [90000, 90999], [60000, 60999], [61000, 61999]] },
 ];
 
 function normalizeDePlz5(input: string): string | null {
@@ -186,6 +299,7 @@ export function lookupGermanBergersByPlz(postcodeOrPlz: string): GermanBergerMat
           name: b.name,
           standplaats: b.standplaats,
           phone: b.phone,
+          email: b.email,
           coverage: `${String(start).padStart(5, "0")}–${String(end).padStart(5, "0")}`,
         });
         break;
@@ -201,14 +315,49 @@ export function lookupGermanBergersByPlz(postcodeOrPlz: string): GermanBergerMat
 // - otherwise: NL lookup (single match)
 export type BergerLookupInternational =
   | { country: "NL"; nl: BergerByPostcode }
+  | { country: "BE"; be: BelgianBergerMatch }
   | { country: "DE"; de: GermanBergerMatch[] };
 
-export function getBergerByPostcodeInternational(input: string): BergerLookupInternational | null {
+export type BergerLookupCountry = "AUTO" | "NL" | "BE" | "DE";
+
+/**
+ * International lookup wrapper.
+ * - DE: 5-digit PLZ, can return multiple matches (overlap).
+ * - NL/BE: 4-digit PC4 (NL has letters but we use the 4 digits).
+ *
+ * IMPORTANT: NL and BE share the same 4-digit format.
+ * If you need BE, pass country="BE" (or select it in the UI).
+ */
+export function getBergerByPostcodeInternational(
+  input: string,
+  country: BergerLookupCountry = "AUTO",
+): BergerLookupInternational | null {
+  if (country === "DE") {
+    const de = lookupGermanBergersByPlz(input);
+    return de ? { country: "DE", de } : null;
+  }
+
+  if (country === "NL") {
+    const nl = getBergerByPostcode(input);
+    return nl ? { country: "NL", nl } : null;
+  }
+
+  if (country === "BE") {
+    const be = lookupBelgianBerger(input);
+    return be ? { country: "BE", be } : null;
+  }
+
+  // AUTO:
+  // - if input contains 5 digits => DE first
+  // - else try NL first (backwards compatible), then BE
   const de = lookupGermanBergersByPlz(input);
   if (de) return { country: "DE", de };
 
   const nl = getBergerByPostcode(input);
   if (nl) return { country: "NL", nl };
+
+  const be = lookupBelgianBerger(input);
+  if (be) return { country: "BE", be };
 
   return null;
 }

@@ -120,6 +120,12 @@
       box-shadow: 0 0 0 4px rgba(255,210,0,.35);
     }
 
+    select:focus{
+      border-color: rgba(0,0,0,.28);
+      box-shadow: 0 0 0 4px rgba(255,210,0,.35);
+      outline:none;
+    }
+
     .row{
       display:flex;
       gap:12px;
@@ -198,7 +204,7 @@
         <div class="brand-badge">VE</div>
         <div>
           <div class="brand-title">Berger lookup</div>
-          <div class="brand-sub">Postcode → regio + primaire berger (PC4-lijst Jan 2026)</div>
+          <div class="brand-sub">Postcode/PLZ → berger (NL/BE/DE)</div>
         </div>
       </div>
       <div style="font-weight:900; opacity:.9;">Van Eijck</div>
@@ -209,12 +215,20 @@
     <div class="card">
       <h2>Berger opzoeken op postcode</h2>
 
-      <label for="pc">Postcode (bijv. 5735EM of 5735 EM)</label>
+      <label for="country">Land</label>
+      <select id="country" style="width:100%; padding:12px 12px; font-size:16px; border:1px solid var(--border); border-radius:12px; outline:none; background:#fff;">
+        <option value="AUTO" selected>Auto (NL bij 4 cijfers / DE bij 5 cijfers)</option>
+        <option value="NL">Nederland (NL)</option>
+        <option value="BE">België (BE)</option>
+        <option value="DE">Duitsland (DE)</option>
+      </select>
+
+      <label for="pc">Postcode / PLZ (bijv. 5735EM, 1000, of 60487)</label>
       <input id="pc" inputmode="numeric" autocomplete="postal-code" placeholder="1234AB" />
 
       <div class="row">
         <button id="btnCopy" disabled>Copy resultaat</button>
-        <span class="muted">Gebaseerd op PC4-lijst (Jan 2026).</span>
+        <span class="muted">NL/BE (PC4) + DE (PLZ).</span>
       </div>
 
       <div id="out" class="result" style="display:none;"></div>
@@ -290,29 +304,101 @@
 ];
 
   // =========================
+  // BE (PC4) – Belgische bergers (4 cijfers)
+  // NB: NL en BE zijn allebei 4 cijfers. Kies land expliciet voor BE als het overlapt.
+  // =========================
+  const VALUES_BE = [
+    ["België","Degrave Middelkerke",null],
+    ["België","Van Looy",null],
+    ["België","MCT Verheye Depannage",null],
+    ["België","Lybaert",null],
+    ["België","Vercauteren",null],
+    ["België","VDC depannage",null],
+    ["België","Hamse Sleepdienst",null],
+    ["België","Cronos Depannage",null],
+    ["België","choffray depannage",null],
+    ["België","Bayards depannage",null],
+    ["België","Geen vaste berger (zwarte zone)",null],
+    ["België","Jan De Plecker",null]
+  ];
+
+  const RANGES_BE = [
+    [8000,8499,0],[8600,8699,0],
+    [7500,7999,1],[8500,8599,1],[8710,8999,1],
+    [8700,8700,2],[9800,9899,2],
+    [9000,9099,3],[9900,9999,3],
+    [9100,9299,4],
+    [2000,2199,5],[2300,2399,5],[2600,2699,5],[2900,2999,5],
+    [2200,2299,6],[2400,2599,6],[2800,2899,6],[3500,3999,6],
+    [4000,4699,7],
+    [4700,4799,8],[4950,4999,8],
+    [4800,4949,9],
+    [5500,5599,10],[6600,6999,10],
+    [1000,1999,11],[3000,3399,11],[5000,5499,11],[5600,6599,11],[7000,7499,11],[9300,9799,11]
+  ].sort((a,b)=>a[0]-b[0]);
+
+  // Backup (alleen bij nood) – Depannage Saint Jean (Frans)
+  const BE_BACKUP_SAINT_JEAN = {
+    name: "Depannage Saint Jean (backup, bij nood)",
+    ranges: [[6000,6299],[7000,7199]]
+  };
+
+  // =========================
   // DE (PLZ) – Duitse bergers (5 cijfers)
   // Overlap is toegestaan: we tonen alle matches.
   // =========================
   const DE_BERGERS = [
     // Standplaats Schopsdorf (39291) — dekking ~75–100km (overlap toegestaan)
     { name: "Bergungsdienst Brameier Schopsdorf GmbH", standplaats: "Schopsdorf", phone: "+493922575013", ranges: [[39000,39999],[10000,13999],[14000,14999],[6000,6999]] },
+
+    // Bestaande DE-bergers
     { name: "Wetterau Leipzig", standplaats: "Leipzig", phone: "+491704941738", ranges: [[4000,4999],[6000,6999],[8000,8999]] },
-    { name: "Tobias Bissinger", standplaats: "Karlsruhe", phone: "+491718849717", ranges: [[76000,76999],[75000,75999],[67000,67999],[68000,68999]] },
     { name: "Schleppi", standplaats: "Saarbrücken", phone: "+4915114522990", ranges: [[66000,66999],[54000,54999],[56000,56999]] },
     { name: "Rouven", standplaats: "Hannover", phone: "+491735954725", ranges: [[30000,30999],[31000,31999],[38000,38999]] },
-    { name: "RIGRA", standplaats: "München", phone: "+4986627575", ranges: [[80000,81999],[82000,82999],[83000,83999],[84000,84999]] },
     { name: "Ronald", standplaats: "Potsdam", phone: "+491721671306", ranges: [[14000,14999],[10000,13999],[16000,16999]] },
-    { name: "Mario Haake / Wüst", standplaats: "Frankfurt am Main", phone: "+4915115087403", ranges: [[60000,60999],[61000,61999],[63000,63999],[64000,64999],[35000,35999]] },
-    { name: "Finn", standplaats: "Viersen", phone: "+4917621119154", ranges: [[41000,41999],[47000,47999],[50000,50999],[52000,52999]] },
-    { name: "Fasold", standplaats: "München", phone: "+491707202999", ranges: [[80000,81999],[82000,82999],[83000,83999],[84000,84999]] },
-    { name: "Bröker (David)", standplaats: "Viersen", phone: "+4921629588851", ranges: [[41000,41999],[47000,47999],[50000,50999],[52000,52999]] },
-    { name: "Bott", standplaats: "Frankfurt (west)", phone: "+491704516981", ranges: [[60000,60999],[61000,61999],[63000,63999],[55000,55999]] },
-    { name: "Bohler Stephan", standplaats: "Zuid-Duitsland (mobiel)", phone: "+4917623705028", ranges: [[86000,86999],[87000,87999],[88000,88999]] },
-    { name: "Berger Stuttgart", standplaats: "Stuttgart", phone: "+4915121971477", ranges: [[70000,70999],[71000,71999],[72000,72999],[73000,73999]] },
     { name: "Auto-Walther (Bosch Service)", standplaats: "Dresden", phone: "+49352002500", ranges: [[1000,1999],[2000,2999],[9000,9999]] },
-    { name: "Auge Thomas Abschleppdienst", standplaats: "Würzburg / Frankfurt / Nürnberg", phone: "+4915114012666", ranges: [[97000,97999],[90000,90999],[60000,60999],[61000,61999]] },
-    { name: "Andreas", standplaats: "Hamburg", phone: "+491794549014", ranges: [[20000,21999],[21000,22999],[23000,23999]] }
+    { name: "Andreas", standplaats: "Hamburg", phone: "+491794549014", ranges: [[20000,21999],[21000,22999],[23000,23999]] },
+
+    // Zuid / Stuttgart / Karlsruhe
+    { name: "Tobias Bissinger", standplaats: "Karlsruhe", phone: "+491718849717", ranges: [[76000,76999],[75000,75999],[67000,67999],[68000,68999]] },
+    { name: "Auto-Bissinger GmbH", standplaats: "Pforzheim", phone: "+497231605010", email: "info@auto-bissinger.de", ranges: [[75000,75999],[76000,76999],[70000,70999],[71000,71999]] },
+    { name: "Berger Stuttgart", standplaats: "Stuttgart", phone: "+4915121971477", ranges: [[70000,70999],[71000,71999],[72000,72999],[73000,73999]] },
+    { name: "Bohler Stephan", standplaats: "Zuid-Duitsland (mobiel)", phone: "+4917623705028", ranges: [[86000,86999],[87000,87999],[88000,88999]] },
+
+    // München (dubbel is ok; verschillende partners)
+    { name: "RIGRA", standplaats: "München", phone: "+4986627575", ranges: [[80000,81999],[82000,82999],[83000,83999],[84000,84999]] },
+    { name: "Fasold", standplaats: "München", phone: "+491707202999", ranges: [[80000,81999],[82000,82999],[83000,83999],[84000,84999]] },
+
+    // Frankfurt / West
+    { name: "Mario Haake / Wüst", standplaats: "Frankfurt am Main", phone: "+4915115087403", ranges: [[60000,60999],[61000,61999],[63000,63999],[64000,64999],[35000,35999]] },
+    { name: "Bott", standplaats: "Frankfurt (west)", phone: "+491704516981", ranges: [[60000,60999],[61000,61999],[63000,63999],[55000,55999]] },
+    { name: "Abschleppdienst Meyer", standplaats: "Frankfurt am Main", phone: "+491715246237", email: "info@abschleppdienst-meyer.de", ranges: [[60000,60999],[61000,61999],[63000,63999],[64000,64999]] },
+
+    // NRW / Viersen
+    { name: "Finn", standplaats: "Viersen", phone: "+4917621119154", ranges: [[41000,41999],[47000,47999],[50000,50999],[52000,52999]] },
+    { name: "Abschleppdienst Bröker GmbH", standplaats: "Viersen", phone: "+492162658888", email: "Britta.Thill@abschleppdienst-broeker.de", ranges: [[41000,41999],[47000,47999],[50000,50999],[52000,52999]] },
+
+    // Münsterland
+    { name: "Automobile Krampe GmbH & Co. KG", standplaats: "Reken", phone: "+492362606260", email: "info@automobile-krampe.de", ranges: [[48000,48999],[49000,49999],[46000,46999],[47000,47999]] },
+
+    // Noord-Duitsland (Oldenburg omgeving)
+    { name: "Koopmann Kirchhatten", standplaats: "Hatten", phone: "+494482393", email: "info@koopmann-kfz.de", ranges: [[26000,26999],[27000,27999],[28000,28999]] },
+
+    // Rheinland-Pfalz / Eifel
+    { name: "Lenz Abschleppdienst Adenau e.K.", standplaats: "Adenau", phone: "+4926919380770", email: "info@abschleppdienst-adenau.de", ranges: [[53000,53999],[54000,54999],[56000,56999]] },
+
+    // Sachsen-Anhalt
+    { name: "Swientek & Gläser GmbH", standplaats: "Weißenfels", phone: "+493443302074", email: "Info@swientek-glaeser.de", ranges: [[6000,6999]] },
+
+    // Sauerland
+    { name: "Abschleppdienst Kruger GmbH", standplaats: "Anröchte", phone: "+4929479759614", email: "info@abschleppdienst-krueger.de", ranges: [[59000,59999],[57000,57999],[58000,58999]] },
+
+    // Auge
+    { name: "Auge Abschleppservice", standplaats: "Kist", phone: "+49930690600", email: "s.heyd@auge-service.de", ranges: [[97000,97999],[90000,90999],[60000,60999],[61000,61999]] }
   ];
+
+
+
 
   // =========================
   // Normalizers
@@ -361,6 +447,45 @@
     return null;
   }
 
+  function lookupBE(input) {
+    const pc4 = normalizeNlPc4(input);
+    if (!pc4) return null;
+
+    const n = Number(pc4);
+    if (!Number.isFinite(n)) return null;
+
+    let lo = 0, hi = RANGES_BE.length - 1;
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+      const [start, end, idx] = RANGES_BE[mid];
+
+      if (n < start) hi = mid - 1;
+      else if (n > end) lo = mid + 1;
+      else {
+        const [regio, primary, backup] = VALUES_BE[idx];
+        let backupFinal = backup || null;
+        if (primary === "Jan De Plecker") {
+          for (const [bs, be] of BE_BACKUP_SAINT_JEAN.ranges) {
+            if (n >= bs && n <= be) {
+              backupFinal = BE_BACKUP_SAINT_JEAN.name;
+              break;
+            }
+          }
+        }
+        return {
+          kind: "BE",
+          pc: pc4,
+          regio,
+          primary,
+          backup: backupFinal,
+          isWisselgebied: false
+        };
+      }
+    }
+    return null;
+  }
+
+
   function lookupDE(input) {
     const plz = normalizeDePlz5(input);
     if (!plz) return null;
@@ -378,6 +503,7 @@
             name: b.name,
             standplaats: b.standplaats,
             phone: b.phone,
+            email: b.email || null,
             coverage: `${String(start).padStart(5,"0")}–${String(end).padStart(5,"0")}`
           });
           break;
@@ -387,16 +513,27 @@
     return matches.length ? matches : null;
   }
 
-  // voorkeur: als er 5 cijfers inzitten => DE, anders NL (4 cijfers)
-  function lookupInternational(input) {
+  // voorkeur: landselectie; AUTO: 5 cijfers => DE, anders NL (en als NL geen match: BE)
+  function lookupInternational(input, country) {
+    const c = country || "AUTO";
+    if (c === "DE") return lookupDE(input);
+    if (c === "NL") return lookupNL(input);
+    if (c === "BE") return lookupBE(input);
+
+    // AUTO
     const maybeDe = normalizeDePlz5(input);
     if (maybeDe) return lookupDE(input);
-    return lookupNL(input);
+
+    const nl = lookupNL(input);
+    if (nl) return nl;
+
+    return lookupBE(input);
   }
 
   // =========================
   // UI
   // =========================
+  const elCountry = document.getElementById("country");
   const elPc = document.getElementById("pc");
   const elOut = document.getElementById("out");
   const elCopy = document.getElementById("btnCopy");
@@ -410,7 +547,7 @@
       return;
     }
 
-    const res = lookupInternational(value);
+    const res = lookupInternational(value, elCountry ? elCountry.value : "AUTO");
 
     if (!res) {
       elOut.style.display = "block";
@@ -426,7 +563,7 @@
 
       elOut.style.display = "block";
       elOut.innerHTML = `
-        <div class="kv"><span class="k">Land:</span>NL</div>
+        <div class="kv"><span class="k">Land:</span>${res.kind}</div>
         <div class="kv"><span class="k">PC4:</span>${res.pc}</div>
         <div class="kv"><span class="k">Regio:</span>${res.regio}${wissel}</div>
         <div class="kv"><span class="k">Primaire berger:</span>${res.primary}</div>
@@ -445,6 +582,7 @@
         <div style="font-weight:900;">${m.name}</div>
         <div class="kv"><span class="k">Standplaats:</span>${m.standplaats}</div>
         <div class="kv"><span class="k">Telefoon:</span>${m.phone}</div>
+        ${m.email ? `<div class="kv"><span class="k">E-mail:</span>${m.email}</div>` : ""}
         <div class="kv"><span class="k">Dekking:</span>${m.coverage}</div>
       </div>
     `).join("");
@@ -459,17 +597,18 @@
   }
 
   elPc.addEventListener("input", render);
+  if (elCountry) elCountry.addEventListener("change", render);
   render();
 
   elCopy.addEventListener("click", async () => {
     const value = (elPc.value || "").trim();
-    const res = lookupInternational(value);
+    const res = lookupInternational(value, elCountry ? elCountry.value : "AUTO");
     if (!res) return;
 
     let txt = "";
     if (!Array.isArray(res)) {
       txt = [
-        "Land: NL",
+        "Land: " + res.kind,
         `PC4: ${res.pc}`,
         `Regio: ${res.regio}${res.isWisselgebied ? " (wisselgebied)" : ""}`,
         `Primaire berger: ${res.primary}`,
@@ -484,6 +623,7 @@
           `${idx+1}) ${m.name}`,
           `   Standplaats: ${m.standplaats}`,
           `   Telefoon: ${m.phone}`,
+          m.email ? `   E-mail: ${m.email}` : null,
           `   Dekking: ${m.coverage}`
         ].join("\n"))
       ].join("\n");
