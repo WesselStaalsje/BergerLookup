@@ -245,7 +245,7 @@ const DE_BERGERS: Array<{
 
   // München (dubbel is ok; verschillende partners)
   { name: "RIGRA", standplaats: "München", phone: "+4986627575", ranges: [[80000, 81999], [82000, 82999], [83000, 83999], [84000, 84999]] },
-  { name: "Fasold", standplaats: "München", phone: "+491707202999", ranges: [[80000, 81999], [82000, 82999], [83000, 83999], [84000, 84999]] },
+  // Fasold removed: exact duplicate coverage of RIGRA (keep 1 primary to avoid double hits)
 
   // Frankfurt / West
   { name: "Mario Haake / Wüst", standplaats: "Frankfurt am Main", phone: "+4915115087403", ranges: [[60000, 60999], [61000, 61999], [63000, 63999], [64000, 64999], [35000, 35999]] },
@@ -253,7 +253,7 @@ const DE_BERGERS: Array<{
   { name: "Abschleppdienst Meyer", standplaats: "Frankfurt am Main", phone: "+491715246237", email: "info@abschleppdienst-meyer.de", ranges: [[60000, 60999], [61000, 61999], [63000, 63999], [64000, 64999]] },
 
   // NRW / Viersen
-  { name: "Finn", standplaats: "Viersen", phone: "+4917621119154", ranges: [[41000, 41999], [47000, 47999], [50000, 50999], [52000, 52999]] },
+  // Finn removed: duplicate coverage with Bröker (keep 1 primary to avoid double hits)
 
   // Bröker (oude entry verwijderd; vervangen door deze met nieuw contact)
   { name: "Abschleppdienst Bröker GmbH", standplaats: "Viersen", phone: "+492162658888", email: "Britta.Thill@abschleppdienst-broeker.de", ranges: [[41000, 41999], [47000, 47999], [50000, 50999], [52000, 52999]] },
