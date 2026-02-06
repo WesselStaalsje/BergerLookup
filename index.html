@@ -194,7 +194,11 @@
       .k{ width: 120px; }
       .brand-sub{ max-width: 240px; }
     }
-  </style>
+  
+  .maplinks{margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;}
+  .btn{display:inline-block; padding:8px 10px; border-radius:10px; border:1px solid rgba(0,0,0,.15); background:#f6f7f9; color:#111; text-decoration:none; font-size:12px; font-weight:700;}
+  .btn:hover{background:#eceef2;}
+</style>
 </head>
 
 <body>
@@ -398,6 +402,64 @@
   ];
 
 
+  // Adressen (voor kaart-link)
+  const ADDRESS_BY_NAME = {
+    "Andreas": "Andreas Hagen Abschleppdienst Gütersloh, Franz-Birkhan-Ring 20, 33330 Gütersloh, Germany",
+    "Auge": "Augé GmbH Kist | Autovermietung | Abschleppdienst | Kranverleih, Ringstraße 6, 97270  Kist, Germany",
+    "Auto-Schafer": "Auto Schäfer GmbH, Wiesenweg 9, 35096  Weimar (Lahn), Germany",
+    "Benke": "Abschleppdienst Auto Benke GmbH, An d. Zolltafel 3, 06526 Sangerhausen, Germany",
+    "Bissinger": "Auto-Bissinger GmbH, Philipp-Weber-Straße 4, 75177  Pforzheim, Germany",
+    "Bott": "Bott Abschleppdienst GmbH, Seeber-Flur 15, 55545  Bad Kreuznach, Germany",
+    "Brameier": "Bergungsdienst Brameier Schopsdorf GmbH, Industriestraße 7, 39291  Schopsdorf, Germany",
+    "Broker": "Abschleppdienst Bröker GmbH, Industriering 29, 41751 Viersen, Germany",
+    "bvba Depannage Lybaert": "bvba Depannage Lybaert, bus 1, Vliegtuiglaan 5, 9000 Gent, Belgium",
+    "carcomplete": "Carcomplete24 GmbH, Rudolstädter Straße 236, 99098 ERFURT, Germany",
+    "Cronos Dépannage": "Cronos Dépannage, Rue de l'Expansion 4, 4460 Grâce-Hollogne, Belgium",
+    "Depannage / Autohandel / Kraanverhuur Vercauteren & Zonen": "Depannage / Autohandel / Kraanverhuur Vercauteren & Zonen, Vossekotstraat 1, 9100 Sint-Niklaas, Belgium",
+    "DEPANNAGE BAYARDS SPRL": "DEPANNAGE BAYARDS SPRL, Av. de l'Indépendance 87, 4020 Liège, Belgium",
+    "Depannage Saint Jean": "Depannage Saint Jean, Rue de Bellecourt 24, 7170 Manage, Belgium",
+    "Depannage Van Looy": "Depannage Van Looy, Lar Blok Z 7a, 8930 Menen, Belgium",
+    "Dietrich": "DIETRICH GmbH, An der Siegtalbrücke 16, 57080 Siegen, Germany",
+    "Dépannage Choffray": "Dépannage Choffray, Ville du Bois 173, 6690 Vielsalm, Belgium",
+    "Florke": "Flörke Lehrte, Daimlerstrasse 15, 31275 Lehrte, Germany",
+    "Frohlich": "Abschleppservice Fröhlich GmbH, Meißner straße 35, 01723 Wilsdruff, Germany",
+    "Garage De Plecker-Pauwels nv": "Garage De Plecker-Pauwels nv, Robbroekstraat 11, 1840 Londerzeel, Belgium",
+    "Garage Takelbedrijf Degrave BVBA 24/24 Takeldienst /Depannage /Recovery": "Garage Takelbedrijf Degrave BVBA 24/24 Takeldienst /Depannage /Recovery, De Kalkaart 24, 8430 Middelkerke, Belgium",
+    "Gerd": "Abschleppdienst Gerd Müller GmbH, Saarbrücker Straße 118, 66424 Homburg, Germany",
+    "Gunster": "Autohaus Guenster Koblenz, Robert-Bosch-Strasse 10, 56070 Koblenz, Germany",
+    "Hamse Sleepdienst (24U/24U BEREIKBAAR)": "Hamse Sleepdienst (24U/24U BEREIKBAAR), Kanaalweg 71, 3980  Tessenderlo-Ham, Belgium",
+    "Helmut": "Helmut Vorleitner e. K. - Autowerkstatt & Abschleppdienst, Henschelring 5, 85551 KIRCHHEIM BEI MÜNCHEN, Germany",
+    "Herbold": "Abschlepp- und Bergedienst Florian Herbold e.K., Hofgartenstraße 25, 74626 BRETZFELD, Germany",
+    "Hofmeister": "Hofmeister Abschlepp- und Bergungsdienst GmbH & Co.KG, Kremser Straße 15, 93055 REGENSBURG, Germany",
+    "Holldobler": "Hölldobler GmbH Leipheim, Ulmer Strasse 11, 89340 LEIPHEIM, Germany",
+    "j.": "Autoverleih & Abschleppdienst J.Bauereiß KG, Werner-von-Siemens-Straße 15, 91413 Neustadt an der Aisch, Germany",
+    "Janicke": "Jänicke Truck- und Havariedienst GmbH, Hauptstraße 51, 16727 OBERKRÄMER, Germany",
+    "Josef": "Auto Fasold GmbH, Ostendstraße 1, 86579 WAIDHOFEN, Germany",
+    "Kaufmann": "Abschlepp- & Bergungs- & Pannendienst - Kaufmann & Sohn Spezialfahrzeuge, Eichenstraße 3, 15537 GRÜNHEIDE (MARK), Germany",
+    "Klotzbach": "Klotzbach GmbH, Karolinenstraße 88, 44793 BOCHUM, Germany",
+    "Knaak": "Mobil Service Knaak GmbH, Siegfriedstraße 8, 22851 NORDERSTEDT, Germany",
+    "koopmann": "Koopmann Kraftfahrzeuge GmbH&Co.KG, Adelheider Str. 46 b, 27755 Delmenhorst, Germany",
+    "Krampe": "Automobile Krampe GmbH & Co. KG, Alte Ziegelei 4, 48734 REKEN, Germany",
+    "kruger": "Abschleppdienst Gerhard Krüger, Boschstraße 12, 59609 Anröchte, Germany",
+    "Lenz": "Lenz Abschleppdienst Adenau e.K., Im Broel 24, 53518 ADENAU, Germany",
+    "MCT Verheye Depannage": "MCT Verheye Depannage, Eekhoutstraat 53, 8755 Wingene, Belgium",
+    "Meyer": "Abschleppdienst Meyer, Rodelheimer Landstrasse 53, 60487 FRANKFURT AM MAIN, Germany",
+    "Peters": "Abschleppdienst Peters GmbH, Grüner Weg 44, 52070 AACHEN, Germany",
+    "Potsdam": "RKA Abschleppdienst Potsdam GmbH, Am Silbergraben 20, 14480 POTSDAM, Germany",
+    "rigra": "Rigra GmbH, Abschlepp - und Bergungsdienst, Traunsteiner Str. 16, 83313 Siegsdorf, Germany",
+    "saller": "Crane Saller GmbH, Betriebsstraße 14, 94469 Deggendorf, Germany",
+    "schmidt": "Auto Schmidt Kfz-Meisterbetrieb Bergungsdienst A2 Pkw-Lkw-Bus, Daimlerstraße 1, 31867 Lauenau, Germany",
+    "Schwientek": "Schwientek & Sohn, Borsigstraße 12, 51381 Leverkusen, Germany",
+    "Stickelbroeck": "Stickelbroeck Bramsche GmbH, Igels Sand 12, 49565 BRAMSCHE, Germany",
+    "Struck": "Struck Bergung- und Pannendienst, Rote Brücke 13, 22113 HAMBURG, Germany",
+    "Swientek": "Swientek & Gläser GmbH, Kleben 8, 06667 Weißenfels, Germany",
+    "TakeldienstVDC": "TakeldienstVDC, Theo Coertjenslaan 17, 2960 Brecht, Belgium",
+    "Walke": "Walke KFZ Service GmbH, In den Neuwiesen 5, 34593  Knüllwald, Germany",
+    "Wehner": "Wehner-Motors GmbH & Co Kfz-Handel KG, Doktor-Raabe-Straße 5, 36043  Fulda, Germany",
+    "Winkelmann": "Winkelmann Autozentrum, Kutenhauser Dorfstraße 12, 32425  Minden, Germany"
+  };
+
+
 
 
   // =========================
@@ -418,6 +480,13 @@
   // =========================
   // Lookups
   // =========================
+  function mapsUrl(query) {
+    return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
+  }
+  function osmUrl(query) {
+    return "https://www.openstreetmap.org/search?query=" + encodeURIComponent(query);
+  }
+
   function lookupNL(input) {
     const pc4 = normalizeNlPc4(input);
     if (!pc4) return null;
@@ -567,7 +636,17 @@
         <div class="kv"><span class="k">PC4:</span>${res.pc}</div>
         <div class="kv"><span class="k">Regio:</span>${res.regio}${wissel}</div>
         <div class="kv"><span class="k">Primaire berger:</span>${res.primary}</div>
+        ${ADDRESS_BY_NAME[res.primary] ? `<div class="kv"><span class="k">Adres:</span>${ADDRESS_BY_NAME[res.primary]}</div>
+        <div class="maplinks">
+          <a class="btn" href="${mapsUrl(ADDRESS_BY_NAME[res.primary])}" target="_blank" rel="noopener">Open kaart (Google)</a>
+          <a class="btn" href="${osmUrl(ADDRESS_BY_NAME[res.primary])}" target="_blank" rel="noopener">Open kaart (OSM)</a>
+        </div>` : ""}
         ${backupLine}
+        ${res.backup && ADDRESS_BY_NAME[res.backup] ? `<div class="kv"><span class="k">Backup adres:</span>${ADDRESS_BY_NAME[res.backup]}</div>
+        <div class="maplinks">
+          <a class="btn" href="${mapsUrl(ADDRESS_BY_NAME[res.backup])}" target="_blank" rel="noopener">Open kaart backup (Google)</a>
+          <a class="btn" href="${osmUrl(ADDRESS_BY_NAME[res.backup])}" target="_blank" rel="noopener">Open kaart backup (OSM)</a>
+        </div>` : ""}
       `;
       elCopy.disabled = false;
       return;
@@ -583,6 +662,11 @@
         <div class="kv"><span class="k">Standplaats:</span>${m.standplaats}</div>
         <div class="kv"><span class="k">Telefoon:</span>${m.phone}</div>
         ${m.email ? `<div class="kv"><span class="k">E-mail:</span>${m.email}</div>` : ""}
+        ${ADDRESS_BY_NAME[m.name] ? `<div class="kv"><span class="k">Adres:</span>${ADDRESS_BY_NAME[m.name]}</div>
+        <div class="maplinks">
+          <a class="btn" href="${mapsUrl(ADDRESS_BY_NAME[m.name])}" target="_blank" rel="noopener">Open kaart (Google)</a>
+          <a class="btn" href="${osmUrl(ADDRESS_BY_NAME[m.name])}" target="_blank" rel="noopener">Open kaart (OSM)</a>
+        </div>` : ""}
         <div class="kv"><span class="k">Dekking:</span>${m.coverage}</div>
       </div>
     `).join("");
@@ -612,7 +696,11 @@
         `PC4: ${res.pc}`,
         `Regio: ${res.regio}${res.isWisselgebied ? " (wisselgebied)" : ""}`,
         `Primaire berger: ${res.primary}`,
-        res.backup ? `Backup: ${res.backup}` : null
+        ADDRESS_BY_NAME[res.primary] ? `Adres: ${ADDRESS_BY_NAME[res.primary]}` : null,
+        ADDRESS_BY_NAME[res.primary] ? `Kaart: ${mapsUrl(ADDRESS_BY_NAME[res.primary])}` : null,
+        res.backup ? `Backup: ${res.backup}` : null,
+        res.backup && ADDRESS_BY_NAME[res.backup] ? `Backup adres: ${ADDRESS_BY_NAME[res.backup]}` : null,
+        res.backup && ADDRESS_BY_NAME[res.backup] ? `Backup kaart: ${mapsUrl(ADDRESS_BY_NAME[res.backup])}` : null
       ].filter(Boolean).join("\n");
     } else {
       txt = [
@@ -624,8 +712,10 @@
           `   Standplaats: ${m.standplaats}`,
           `   Telefoon: ${m.phone}`,
           m.email ? `   E-mail: ${m.email}` : null,
+          ADDRESS_BY_NAME[m.name] ? `   Adres: ${ADDRESS_BY_NAME[m.name]}` : null,
+          ADDRESS_BY_NAME[m.name] ? `   Kaart: ${mapsUrl(ADDRESS_BY_NAME[m.name])}` : null,
           `   Dekking: ${m.coverage}`
-        ].join("\n"))
+        ].filter(Boolean).join("\n"))
       ].join("\n");
     }
 
