@@ -1,596 +1,199 @@
-// Berger Lookup (NL / BE / DE)
-// Note: file extension is .ts, but the content is plain modern JavaScript (no TypeScript syntax),
-// so it can run directly in the browser as an ES module.
+// Auto-generated from your Sjablonen-main mapping (Jan 2026)
+// Standalone postcode (PC4) -> berger lookup
 
-// --------------------
-// Data
-// --------------------
-const VALUES_NL = [["Amsterdam Centraal + Gooi","Bergnet","Hoogwout"],["Amsterdam West","Hoogwout",null],["Utrecht","Modern",null],["West Flevoland","Bergnet",null],["Noord-Oost Noord-Holland","Theo Rood",null],["Noord-West Noord-Holland","Haulo Berging",null],["Noord-Brabant + stukje Gelderland","van Eijck",null],["Gelderland","van Eijck",null],["Wisselgebied Amersfoort","van Eijck Ede","Bergnet"],["Oost-Flevoland + Zwolle etc.","Stouwdam",null],["Wisselgebied Apeldoorn","van Eijck Ede","Duiven"],["Zeeland","Kuzee",null],["Wisselgebied Eindhoven","van Eijck Eindhoven","Herpertz Nederweert"]];
-const RANGES_NL = [[1011,1019,0],[1021,1028,0],[1031,1036,0],[1037,1037,1],[1041,1044,0],[1046,1047,1],[1051,1059,0],[1060,1060,1],[1061,1068,0],[1069,1069,1],[1071,1079,0],[1081,1083,0],[1086,1087,0],[1091,1098,0],[1101,1109,0],[1111,1115,0],[1117,1119,1],[1121,1121,1],[1127,1127,1],[1131,1132,1],[1135,1135,1],[1141,1141,1],[1145,1145,1],[1151,1151,1],[1153,1154,1],[1161,1161,1],[1165,1165,1],[1171,1171,1],[1175,1175,1],[1181,1183,1],[1184,1184,0],[1185,1188,1],[1191,1191,0],[1211,1218,0],[1221,1223,0],[1231,1231,2],[1241,1241,0],[1243,1244,0],[1251,1252,0],[1261,1262,0],[1271,1277,0],[1309,1309,3],[1311,1319,3],[1321,1329,3],[1331,1336,3],[1338,1339,3],[1341,1341,3],[1343,1343,3],[1349,1349,3],[1351,1359,3],[1361,1364,3],[1381,1384,0],[1391,1391,0],[1393,1394,0],[1396,1396,0],[1398,1399,0],[1401,1406,0],[1411,1412,0],[1421,1424,1],[1427,1427,1],[1431,1432,1],[1435,1438,1],[1441,1448,1],[1451,1452,1],[1454,1454,1],[1456,1456,1],[1458,1458,1],[1461,1461,1],[1462,1464,4],[1471,1471,1],[1472,1477,4],[1481,1483,1],[1484,1485,5],[1486,1489,1],[1501,1509,1],[1511,1511,1],[1521,1521,1],[1525,1525,1],[1531,1531,1],[1534,1534,1],[1536,1536,1],[1541,1541,1],[1544,1544,1],[1546,1546,1],[1551,1551,1],[1561,1562,1],[1566,1567,1],[1601,1602,4],[1606,1609,4],[1611,1611,4],[1613,1614,4],[1616,1617,4],[1619,1619,4],[1621,1625,4],[1627,1628,4],[1631,1631,4],[1633,1634,4],[1636,1636,4],[1641,1643,4],[1645,1648,4],[1652,1652,4],[1654,1655,4],[1657,1658,4],[1661,1663,4],[1671,1671,4],[1674,1674,4],[1676,1676,4],[1678,1679,4],[1681,1689,4],[1691,1693,4],[1695,1697,4],[1701,1706,5],[1711,1711,4],[1713,1713,4],[1715,1716,4],[1718,1719,4],[1721,1724,5],[1731,1731,4],[1732,1732,5],[1733,1734,4],[1735,1736,5],[1738,1738,5],[1741,1742,5],[1744,1744,5],[1746,1747,5],[1749,1749,5],[1751,1757,5],[1759,1759,5],[1761,1761,5],[1764,1764,5],[1766,1769,5],[1771,1771,4],[1773,1775,4],[1777,1779,4],[1781,1789,5],[1811,1817,5],[1821,1827,5],[1829,1829,5],[1831,1832,5],[1834,1834,5],[1841,1844,5],[1846,1847,5],[1851,1853,5],[1861,1862,5],[1865,1865,5],[1871,1871,5],[1873,1873,5],[1901,1902,1],[1906,1906,5],[1911,1911,1],[1921,1921,1],[1931,1931,5],[1934,1935,5],[1941,1949,1],[1951,1951,1],[1961,1969,1],[1971,1976,1],[1981,1981,1],[1985,1985,1],[1991,1992,1],[2011,2015,1],[2019,2019,1],[2021,2026,1],[2031,2037,1],[2041,2042,1],[2051,2051,1],[2061,2061,1],[2063,2065,1],[2071,2071,1],[2082,2082,1],[2101,2106,1],[2111,2111,1],[2114,2114,1],[2116,2116,1],[2121,2121,1],[2131,2136,1],[2141,2144,1],[2151,2154,1],[2181,2182,1],[3372,3372,6],[3401,3405,2],[3417,3417,2],[3431,3433,2],[3435,3439,2],[3441,3449,2],[3451,3454,2],[3461,3461,2],[3481,3481,2],[3511,3515,2],[3521,3528,2],[3531,3534,2],[3541,3546,2],[3551,3555,2],[3561,3566,2],[3571,3573,2],[3581,3585,2],[3601,3608,2],[3611,3612,2],[3615,3615,2],[3621,3621,2],[3625,3625,2],[3631,3631,2],[3632,3634,0],[3701,3708,2],[3709,3709,7],[3711,3711,7],[3712,3712,2],[3721,3723,2],[3731,3732,2],[3734,3735,2],[3737,3739,2],[3741,3744,0],[3749,3749,0],[3751,3752,0],[3754,3755,0],[3761,3766,0],[3768,3768,0],[3769,3769,2],[3771,3776,7],[3781,3781,7],[3784,3785,8],[3791,3792,7],[3794,3794,7],[3811,3819,8],[3821,3826,8],[3828,3829,8],[3831,3836,8],[3841,3844,9],[3845,3845,10],[3846,3846,9],[3847,3847,10],[3848,3849,9],[3851,3853,10],[3861,3864,8],[3871,3871,8],[3881,3882,10],[3886,3886,10],[3888,3888,10],[3891,3897,3],[3898,3898,9],[3899,3899,3],[3901,3907,7],[3911,3912,7],[3921,3922,7],[3925,3925,7],[3927,3927,7],[3931,3931,7],[3941,3941,7],[3945,3945,7],[3947,3947,7],[3951,3951,7],[3953,3953,7],[3956,3956,7],[3958,3959,7],[3961,3962,7],[3971,3972,7],[3981,3981,2],[3984,3985,7],[3991,3995,2],[3997,3997,7],[4251,4251,6],[4254,4255,6],[4261,4261,6],[4264,4269,6],[4271,4271,6],[4273,4273,6],[4281,4281,6],[4283,4288,6],[4331,4339,11],[4341,4341,11],[4351,4354,11],[4356,4357,11],[4361,4361,11],[4363,4365,11],[4371,4371,11],[4373,4374,11],[4381,4389,11],[4421,4421,11],[4431,4431,11],[4433,4438,11],[4441,4441,11],[4443,4444,11],[4451,4451,11],[4453,4456,11],[4458,4458,11],[4461,4465,11],[4471,4472,11],[4474,4475,11],[4481,4482,11],[4484,4486,11],[4491,4491,11],[4493,4494,11],[4501,4501,11],[4503,4508,11],[4511,4511,11],[4513,4513,11],[4515,4515,11],[4521,4522,11],[4524,4525,11],[4527,4529,11],[4531,4533,11],[4535,4539,11],[4541,4543,11],[4551,4551,11],[4553,4554,11],[4561,4562,11],[4564,4569,11],[4571,4571,11],[4574,4576,11],[4581,4581,11],[4583,4589,11],[4611,4617,6],[4621,4625,6],[4631,4631,6],[4634,4635,6],[4641,4641,6],[4651,4652,6],[4655,4655,6],[4661,4661,6],[4664,4664,6],[4671,4671,6],[4675,4675,6],[4681,4681,6],[4691,4691,6],[4693,4698,6],[4701,4709,6],[4711,4711,6],[4714,4715,6],[4721,4722,6],[4724,4727,6],[4731,4731,6],[4735,4735,6],[4741,4741,6],[4744,4744,6],[4751,4751,6],[4754,4754,6],[4756,4756,6],[4758,4759,6],[4761,4762,6],[4765,4766,6],[4771,4772,6],[4781,4782,6],[4791,4791,6],[4793,4794,6],[4796,4797,6],[4811,4819,6],[4822,4827,6],[4834,4839,6],[4841,4841,6],[4844,4845,6],[4847,4847,6],[4849,4849,6],[4851,4851,6],[4854,4856,6],[4858,4859,6],[4861,4861,6],[4871,4879,6],[4881,4882,6],[4884,4885,6],[4891,4891,6],[4901,4909,6],[4911,4911,6],[4921,4921,6],[4924,4924,6],[4926,4927,6],[4931,4931,6],[4941,4942,6],[4944,4944,6],[5011,5015,6],[5017,5018,6],[5021,5022,6],[5025,5026,6],[5032,5032,6],[5035,5038,6],[5041,5049,6],[5051,5053,6],[5056,5057,6],[5059,5059,6],[5061,5063,6],[5066,5066,6],[5071,5071,6],[5074,5074,6],[5076,5076,6],[5081,5081,6],[5084,5084,6],[5085,5085,12],[5087,5087,12],[5089,5089,6],[5091,5091,12],[5094,5096,12],[5101,5107,6],[5109,5109,6],[5111,5111,6],[5113,5113,6],[5121,5122,6],[5124,5126,6],[5131,5131,6],[5133,5133,6],[5141,5146,6],[5151,5152,6],[5154,5154,6],[5156,5158,6],[5161,5161,6],[5165,5165,6],[5171,5172,6],[5175,5176,6],[5211,5213,6],[5215,5216,6],[5221,5224,6],[5231,5237,6],[5241,5249,6],[5251,5258,6],[5261,5264,6],[5266,5266,6],[5268,5268,6],[5271,5272,6],[5275,5275,6],[5281,5283,6],[5291,5294,6],[5296,5296,6],[5298,5298,6],[5301,5302,6],[5305,5308,6],[5311,5311,6],[5313,5318,6],[5321,5321,6],[5324,5325,6],[5327,5328,6],[5331,5331,6],[5333,5335,6],[5341,5349,6],[5351,5359,6],[5361,5361,6],[5363,5364,6],[5366,5368,6],[5371,5371,6],[5373,5375,6],[5381,5384,6],[5386,5386,6],[5388,5388,6],[5391,5392,6],[5394,5398,6],[5401,5406,6],[5408,5408,6],[5411,5411,6],[5421,5422,12],[5423,5423,6],[5425,5425,12],[5427,5427,6],[5437,5439,6],[5453,5453,6],[5461,5467,6],[5469,5469,6],[5471,5473,6],[5476,5476,6],[5481,5482,6],[5491,5492,6],[5501,5509,12],[5511,5513,12],[5521,5521,12],[5524,5525,12],[5527,5529,12],[5531,5531,12],[5534,5534,12],[5541,5541,12],[5551,5556,12],[5561,5561,12],[5563,5563,12],[5571,5571,12],[5575,5575,12],[5581,5583,12],[5591,5591,12],[5595,5595,12],[5611,5617,12],[5621,5629,12],[5631,5633,12],[5641,5647,12],[5651,5658,12],[5661,5667,12],[5671,5674,12],[5681,5685,12],[5688,5689,6],[5691,5692,12],[5694,5694,12],[5701,5709,12],[5711,5712,12],[5715,5715,12],[5721,5722,12],[5724,5725,12],[5731,5731,12],[5735,5735,12],[5737,5738,12],[5741,5741,12],[5751,5754,12],[5756,5756,12],[5761,5761,12],[5763,5763,12],[6001,6004,12],[6006,6006,12],[6021,6021,12],[6023,6024,12],[6026,6029,12],[6511,6512,6],[6515,6515,7],[6521,6524,6],[6531,6538,6],[6541,6546,6],[6551,6551,6],[6566,6566,7],[6577,6579,7],[6601,6606,6],[6611,6613,6],[6615,6617,6],[6621,6621,6],[6624,6624,6],[6626,6629,6],[6631,6631,6],[6634,6634,6],[6641,6642,6],[6644,6645,6],[6651,6655,6],[6657,6659,6],[6661,6663,7],[6665,6665,7],[6675,6678,7],[6681,6681,7],[6684,6687,7],[6691,6691,7],[6701,6709,7],[6711,6718,7],[6721,6721,7],[6731,6733,7],[6741,6741,7],[6744,6745,7],[6811,6816,7],[6821,6828,7],[6831,6836,7],[6841,6846,7],[6851,6852,7],[6861,6862,7],[6865,6866,7],[6869,6869,7],[6871,6871,7],[6874,6874,7],[6877,6877,7],[6881,6883,7],[6891,6891,7],[6901,6905,7],[6909,6909,7],[6911,6911,7],[6913,6917,7],[6921,6924,7],[6931,6932,7],[6941,6942,7],[6951,6953,7],[6955,6955,7],[6981,6984,7],[6986,6988,7],[6991,6991,7],[6994,6994,7],[6996,6999,7],[7001,7009,7],[7031,7031,7],[7035,7039,7],[7041,7041,7],[7044,7044,7],[7046,7048,7],[7225,7225,7],[7311,7317,10],[7321,7329,10],[7331,7336,10],[7339,7339,10],[7341,7341,10],[7345,7346,10],[7351,7352,7],[7384,7384,10],[7391,7392,10],[7395,7396,10],[7397,7397,9],[7411,7413,10],[7415,7419,10],[7421,7427,10],[7429,7429,10],[7433,7433,10],[7439,7439,10],[8011,8017,9],[8019,8019,9],[8021,8025,9],[8031,8034,9],[8041,8043,9],[8051,8052,9],[8071,8072,9],[8075,8076,10],[8077,8077,9],[8079,8079,9],[8081,8082,9],[8084,8085,9],[8091,8091,9],[8094,8097,9],[8161,8162,9],[8166,8167,9],[8171,8172,9],[8181,8181,9],[8191,8191,9],[8193,8194,9],[8196,8196,9],[8198,8198,9],[8211,8212,3],[8218,8218,3],[8219,8219,9],[8222,8226,3],[8231,8233,3],[8239,8239,3],[8241,8245,3],[8251,8256,9],[8265,8266,9],[8274,8276,9],[8278,8278,9]].sort((a,b) => a[0]-b[0]);
-
-const VALUES_BE = [["België","Degrave Middelkerke",null],["België","Van Looy",null],["België","MCT Verheye Depannage",null],["België","Lybaert",null],["België","Vercauteren",null],["België","VDC depannage",null],["België","Hamse Sleepdienst",null],["België","Cronos Depannage",null],["België","choffray depannage",null],["België","Bayards depannage",null],["België","Geen vaste berger (zwarte zone)",null],["België","Jan De Plecker",null]];
-const RANGES_BE = [[8000,8499,0],[8600,8699,0],[7500,7999,1],[8500,8599,1],[8710,8999,1],[8700,8700,2],[9800,9899,2],[9000,9099,3],[9900,9999,3],[9100,9299,4],[2000,2199,5],[2300,2399,5],[2600,2699,5],[2900,2999,5],[2200,2299,6],[2400,2599,6],[2800,2899,6],[3500,3999,6],[4000,4699,7],[4700,4799,8],[4950,4999,8],[4800,4949,9],[5500,5599,10],[6600,6999,10],[1000,1999,11],[3000,3399,11],[5000,5499,11],[5600,6599,11],[7000,7499,11],[9300,9799,11]].sort((a,b) => a[0]-b[0]);
-
-const DE_BERGERS = [{"name":"Bergungsdienst Brameier Schopsdorf GmbH","standplaats":"Schopsdorf","phone":"+493922575013","ranges":[[39000,39999],[10000,13999],[14000,14999],[6000,6999]]},{"name":"Wetterau Leipzig","standplaats":"Leipzig","phone":"+491704941738","ranges":[[4000,4999],[6000,6999],[8000,8999]]},{"name":"Schleppi","standplaats":"Saarbrücken","phone":"+4915114522990","ranges":[[66000,66999],[54000,54999],[56000,56999]]},{"name":"Rouven","standplaats":"Hannover","phone":"+491735954725","ranges":[[30000,30999],[31000,31999],[38000,38999]]},{"name":"Ronald","standplaats":"Potsdam","phone":"+491721671306","ranges":[[14000,14999],[10000,13999],[16000,16999]]},{"name":"Auto-Walther (Bosch Service)","standplaats":"Dresden","phone":"+49352002500","ranges":[[1000,1999],[2000,2999],[9000,9999]]},{"name":"Andreas","standplaats":"Hamburg","phone":"+491794549014","ranges":[[20000,21999],[21000,22999],[23000,23999]]},{"name":"Tobias Bissinger","standplaats":"Karlsruhe","phone":"+491718849717","ranges":[[76000,76999],[75000,75999],[67000,67999],[68000,68999]]},{"name":"Auto-Bissinger GmbH","standplaats":"Pforzheim","phone":"+497231605010","email":"info@auto-bissinger.de","ranges":[[75000,75999],[76000,76999],[70000,70999],[71000,71999]]},{"name":"Berger Stuttgart","standplaats":"Stuttgart","phone":"+4915121971477","ranges":[[70000,70999],[71000,71999],[72000,72999],[73000,73999]]},{"name":"Bohler Stephan","standplaats":"Zuid-Duitsland (mobiel)","phone":"+4917623705028","ranges":[[86000,86999],[87000,87999],[88000,88999]]},{"name":"RIGRA","standplaats":"München","phone":"+4986627575","ranges":[[80000,81999],[82000,82999],[83000,83999],[84000,84999]]},{"name":"Fasold","standplaats":"München","phone":"+491707202999","ranges":[[80000,81999],[82000,82999],[83000,83999],[84000,84999]]},{"name":"Mario Haake / Wüst","standplaats":"Frankfurt am Main","phone":"+4915115087403","ranges":[[60000,60999],[61000,61999],[63000,63999],[64000,64999],[35000,35999]]},{"name":"Bott","standplaats":"Frankfurt (west)","phone":"+491704516981","ranges":[[60000,60999],[61000,61999],[63000,63999],[55000,55999]]},{"name":"Abschleppdienst Meyer","standplaats":"Frankfurt am Main","phone":"+491715246237","email":"info@abschleppdienst-meyer.de","ranges":[[60000,60999],[61000,61999],[63000,63999],[64000,64999]]},{"name":"Abschleppdienst Bröker GmbH","standplaats":"Viersen","phone":"+492162658888","email":"Britta.Thill@abschleppdienst-broeker.de","ranges":[[41000,41999],[42000,42999],[47000,47999],[50000,50999],[52000,52999]]},{"name":"Automobile Krampe GmbH & Co. KG","standplaats":"Reken","phone":"+492362606260","email":"info@automobile-krampe.de","ranges":[[48000,48999],[49000,49999],[46000,46999],[47000,47999]]},{"name":"Koopmann Kirchhatten","standplaats":"Hatten","phone":"+494482393","email":"info@koopmann-kfz.de","ranges":[[26000,26999],[27000,27999],[28000,28999]]},{"name":"Lenz Abschleppdienst Adenau e.K.","standplaats":"Adenau","phone":"+4926919380770","email":"info@abschleppdienst-adenau.de","ranges":[[53000,53999],[54000,54999],[56000,56999]]},{"name":"Swientek & Gläser GmbH","standplaats":"Weißenfels","phone":"+493443302074","email":"Info@swientek-glaeser.de","ranges":[[6000,6999]]},{"name":"Abschleppdienst Kruger GmbH","standplaats":"Anröchte","phone":"+4929479759614","email":"info@abschleppdienst-krueger.de","ranges":[[59000,59999],[57000,57999],[58000,58999]]},{"name":"Auge Abschleppservice","standplaats":"Kist","phone":"+49930690600","email":"s.heyd@auge-service.de","ranges":[[97000,97999],[90000,90999],[60000,60999],[61000,61999]]}];
-
-const ADDRESS_DE = {"Andreas Hagen":{"official":"Andreas Hagen Abschleppdienst Gütersloh","address":"Franz-Birkhan-Ring 20, 33330","city":"Gütersloh"},"Auge":{"official":"Augé GmbH Kist | Autovermietung | Abschleppdienst | Kranverleih","address":"Ringstraße 6, 97270","city":"Kist"},"Auto-Schafer GmbH":{"official":"Auto Schäfer GmbH","address":"Wiesenweg 9, 35096","city":"Weimar (Lahn)"},"Benke":{"official":"Abschleppdienst Auto Benke GmbH","address":"An d. Zolltafel 3, 06526","city":"Sangerhausen"},"Bissinger":{"official":"Auto-Bissinger GmbH","address":"Philipp-Weber-Straße 4, 75177","city":"Pforzheim"},"Bott":{"official":"Bott Abschleppdienst GmbH","address":"Seeber-Flur 15, 55545","city":"Bad Kreuznach"},"Brameier":{"official":"Bergungsdienst Brameier Schopsdorf GmbH","address":"Industriestraße 7, 39291","city":"Schopsdorf"},"Broker":{"official":"Abschleppdienst Bröker GmbH","address":"Industriering 29, 41751","city":"Viersen"},"Dietrich":{"official":"DIETRICH GmbH","address":"An der Siegtalbrücke 16, 57080","city":"Siegen"},"Florke":{"official":"Flörke Lehrte","address":"Daimlerstrasse 15, 31275","city":"Lehrte"},"Frohlich":{"official":"Abschleppservice Fröhlich GmbH","address":"Meißner straße 35, 01723","city":"Wilsdruff"},"Gerd Muller/Schleppi Bjorn":{"official":"Abschleppdienst Gerd Müller GmbH","address":"Saarbrücker Straße 118, 66424","city":"Homburg"},"Gunster":{"official":"Autohaus Guenster Koblenz","address":"Robert-Bosch-Strasse 10, 56070","city":"Koblenz"},"Helmut Vorleitner":{"official":"Helmut Vorleitner e. K. - Autowerkstatt & Abschleppdienst","address":"Henschelring 5, 85551","city":"KIRCHHEIM BEI MÜNCHEN"},"Herbold Florian":{"official":"Abschlepp- und Bergedienst Florian Herbold e.K.","address":"Hofgartenstraße 25, 74626","city":"BRETZFELD"},"Hofmeister":{"official":"Hofmeister Abschlepp- und Bergungsdienst GmbH & Co.KG","address":"Kremser Straße 15, 93055","city":"REGENSBURG"},"Holldobler":{"official":"Hölldobler GmbH Leipheim","address":"Ulmer Strasse 11, 89340","city":"LEIPHEIM"},"Janicke":{"official":"Jänicke Truck- und Havariedienst GmbH","address":"Hauptstraße 51, 16727","city":"OBERKRÄMER"},"Josef Eichenseher":{"official":"Abschleppdienst Josef Eichenseher","address":"Muthmannstrasse 10, 80939","city":"MÜNCHEN"},"Josef Fasold":{"official":"Auto Fasold GmbH","address":"Ostendstraße 1, 86579","city":"WAIDHOFEN"},"Kaufmann spezialfahrzeuge":{"official":"Abschlepp- & Bergungs- & Pannendienst - Kaufmann & Sohn Spezialfahrzeuge","address":"Eichenstraße 3, 15537","city":"GRÜNHEIDE (MARK)"},"Klotzbach":{"official":"Klotzbach GmbH","address":"Karolinenstraße 88, 44793","city":"BOCHUM"},"Knaak":{"official":"Mobil Service Knaak GmbH","address":"Siegfriedstraße 8, 22851","city":"NORDERSTEDT"},"Struck":{"official":"Struck Bergung- und Pannendienst","address":"Rote Brücke 13, 22113","city":"HAMBURG"},"Krampe":{"official":"Automobile Krampe GmbH & Co. KG","address":"Alte Ziegelei 4, 48734","city":"REKEN"},"Lenz":{"official":"Lenz Abschleppdienst Adenau e.K.","address":"Im Broel 24, 53518","city":"ADENAU"},"Meyer":{"official":"Abschleppdienst Meyer","address":"Rodelheimer Landstrasse 53, 60487","city":"FRANKFURT AM MAIN"},"Peters Eschweiler":{"official":"Abschleppdienst Peters GmbH","address":"Grüner Weg 44, 52070","city":"AACHEN"},"Potsdam Nord":{"official":"RKA Abschleppdienst Potsdam GmbH","address":"Am Silbergraben 20, 14480","city":"POTSDAM"},"Schwientek & sohn":{"official":"Schwientek & Sohn","address":"Borsigstraße 12, 51381","city":"Leverkusen"},"Stickelbroeck":{"official":"Stickelbroeck Bramsche GmbH","address":"Igels Sand 12, 49565","city":"BRAMSCHE"},"Swientek & Glaser":{"official":"Swientek & Gläser GmbH","address":"Kleben 8, 06667","city":"Weißenfels"},"Walke":{"official":"Walke KFZ Service GmbH","address":"In den Neuwiesen 5, 34593","city":"Knüllwald"},"Wehner Motors":{"official":"Wehner-Motors GmbH & Co Kfz-Handel KG","address":"Doktor-Raabe-Straße 5, 36043","city":"Fulda"},"Winkelmann":{"official":"Winkelmann Autozentrum","address":"Kutenhauser Dorfstraße 12, 32425","city":"Minden"},"carcomplete 24":{"official":"Carcomplete24 GmbH","address":"Rudolstädter Straße 236, 99098","city":"ERFURT"},"j. Bauereiss":{"official":"Autoverleih & Abschleppdienst J.Bauereiß KG","address":"Werner-von-Siemens-Straße 15, 91413","city":"Neustadt an der Aisch"},"koopmann":{"official":"Koopmann Kraftfahrzeuge GmbH&Co.KG","address":"Adelheider Str. 46 b, 27755","city":"Delmenhorst"},"kruger":{"official":"Abschleppdienst Gerhard Krüger","address":"Boschstraße 12, 59609","city":"Anröchte"},"rigra":{"official":"Rigra GmbH, Abschlepp - und Bergungsdienst","address":"Traunsteiner Str. 16, 83313","city":"Siegsdorf"},"saller":{"official":"Crane Saller GmbH","address":"Betriebsstraße 14, 94469","city":"Deggendorf"},"schmidt":{"official":"Auto Schmidt Kfz-Meisterbetrieb Bergungsdienst A2 Pkw-Lkw-Bus","address":"Daimlerstraße 1, 31867","city":"Lauenau"}};
-const ADDRESS_BE = {"Garage De Plecker-Pauwels nv":{"official":"Garage De Plecker-Pauwels nv","address":"Robbroekstraat 11, 1840","city":"Londerzeel"},"Depannage / Autohandel / Kraanverhuur Vercauteren & Zonen":{"official":"Depannage / Autohandel / Kraanverhuur Vercauteren & Zonen","address":"Vossekotstraat 1, 9100","city":"Sint-Niklaas"},"MCT Verheye Depannage":{"official":"MCT Verheye Depannage","address":"Eekhoutstraat 53, 8755","city":"Wingene"},"Depannage Van Looy":{"official":"Depannage Van Looy","address":"Lar Blok Z 7a, 8930","city":"Menen"},"TakeldienstVDC":{"official":"TakeldienstVDC","address":"Theo Coertjenslaan 17, 2960","city":"Brecht"},"Hamse Sleepdienst (24U/24U BEREIKBAAR)":{"official":"Hamse Sleepdienst (24U/24U BEREIKBAAR)","address":"Kanaalweg 71, 3980","city":"Tessenderlo-Ham"},"Garage Takelbedrijf Degrave BVBA 24/24 Takeldienst /Depannage /Recovery":{"official":"Garage Takelbedrijf Degrave BVBA 24/24 Takeldienst /Depannage /Recovery","address":"De Kalkaart 24, 8430","city":"Middelkerke"},"DEPANNAGE BAYARDS SPRL":{"official":"DEPANNAGE BAYARDS SPRL","address":"Av. de l'Indépendance 87, 4020","city":"Liège"},"Cronos Dépannage":{"official":"Cronos Dépannage","address":"Rue de l'Expansion 4, 4460","city":"Grâce-Hollogne"},"Dépannage Choffray":{"official":"Dépannage Choffray","address":"Ville du Bois 173, 6690","city":"Vielsalm"},"bvba Depannage Lybaert":{"official":"bvba Depannage Lybaert","address":"bus 1, Vliegtuiglaan 5, 9000","city":"Gent"},"Depannage Saint Jean":{"official":"Depannage Saint Jean","address":"Rue de Bellecourt 24, 7170","city":"Manage"}};
-const BE_ALIAS = {"Jan De Plecker":"Garage De Plecker-Pauwels nv","Vercauteren":"Depannage / Autohandel / Kraanverhuur Vercauteren & Zonen","Verheye":"MCT Verheye Depannage","Van Looy":"Depannage Van Looy","VDC":"TakeldienstVDC","Hamse":"Hamse Sleepdienst (24U/24U BEREIKBAAR)","Degrave":"Garage Takelbedrijf Degrave BVBA 24/24 Takeldienst /Depannage /Recovery","Bayards":"DEPANNAGE BAYARDS SPRL","Cronos":"Cronos Dépannage","Choffray":"Dépannage Choffray","Lybaert":"bvba Depannage Lybaert","Saint Jean":"Depannage Saint Jean"};
-
-// Default fallback when a postcode is outside all configured ranges
-const FALLBACK_BY_COUNTRY = {
-  NL: { name: "van Eijck", company: "Van Eijck Mobility" },
-  BE: { name: "Jan De Plecker", company: "Garage De Plecker-Pauwels nv" },
-  DE: { name: "Broker", company: "Abschleppdienst Bröker GmbH" },
+export type BergerLookupResult = {
+  pc4: string;
+  regio: string;
+  primary: string;
+  backup: string | null;
 };
 
-// --------------------
-// Utils
-// --------------------
-function sleep(ms) {
-  return new Promise(r => setTimeout(r, ms));
+const VALUES: Array<[regio: string, primary: string, backup: string | null]> = [
+  ["Amsterdam Centraal + Gooi","Bergnet","Hoogwout"],
+  ["Amsterdam West","Hoogwout",null],
+  ["Utrecht","Modern",null],
+  ["West Flevoland","Bergnet",null],
+  ["Noord-Oost Noord-Holland","Theo Rood",null],
+  ["Noord-West Noord-Holland","Haulo Berging",null],
+  ["Noord-Brabant + stukje Gelderland","van Eijck",null],
+  ["Gelderland","van Eijck",null],
+  ["Wisselgebied Amersfoort","van Eijck Ede","Bergnet"],
+  ["Oost-Flevoland + Zwolle etc.","Stouwdam",null],
+  ["Wisselgebied Apeldoorn","van Eijck Ede","Duiven"],
+  ["Zeeland","Kuzee",null],
+  ["Wisselgebied Eindhoven","van Eijck Eindhoven","Herpertz Nederweert"]
+] as const;
+
+const RANGES: Array<[start: number, end: number, idx: number]> = [
+  [1011,1019,0],[1021,1028,0],[1031,1036,0],[1037,1037,1],[1041,1044,0],[1046,1047,1],[1051,1059,0],[1060,1060,1],[1061,1068,0],[1069,1069,1],[1071,1079,0],[1081,1083,0],[1086,1087,0],[1091,1098,0],
+  [1101,1109,0],[1111,1115,0],[1117,1119,1],[1121,1121,1],[1127,1127,1],[1131,1132,1],[1135,1135,1],[1141,1141,1],[1145,1145,1],[1151,1151,1],[1153,1154,1],[1161,1161,1],[1165,1165,1],[1171,1171,1],
+  [1175,1175,1],[1181,1183,1],[1184,1184,0],[1185,1188,1],[1191,1191,0],[1211,1218,0],[1221,1223,0],[1231,1231,2],[1241,1241,0],[1243,1244,0],[1251,1252,0],[1261,1262,0],[1271,1277,0],[1309,1309,3],
+  [1311,1319,3],[1321,1329,3],[1331,1336,3],[1338,1339,3],[1341,1341,3],[1343,1343,3],[1349,1349,3],[1351,1359,3],[1361,1364,3],[1381,1384,0],[1391,1391,0],[1393,1394,0],[1396,1396,0],[1398,1399,0],
+  [1401,1406,0],[1411,1412,0],[1421,1424,1],[1427,1427,1],[1431,1432,1],[1435,1438,1],[1441,1448,1],[1451,1452,1],[1454,1454,1],[1456,1456,1],[1458,1458,1],[1461,1461,1],[1462,1464,4],[1471,1471,1],
+  [1472,1477,4],[1481,1483,1],[1484,1485,5],[1486,1489,1],[1501,1509,1],[1511,1511,1],[1521,1521,1],[1525,1525,1],[1531,1531,1],[1534,1534,1],[1536,1536,1],[1541,1541,1],[1544,1544,1],[1546,1546,1],
+  [1551,1551,1],[1561,1562,1],[1566,1567,1],[1601,1602,4],[1606,1609,4],[1611,1611,4],[1613,1614,4],[1616,1617,4],[1619,1619,4],[1621,1625,4],[1627,1628,4],[1631,1631,4],[1633,1634,4],[1636,1636,4],
+  [1641,1643,4],[1645,1648,4],[1652,1652,4],[1654,1655,4],[1657,1658,4],[1661,1663,4],[1671,1671,4],[1674,1674,4],[1676,1676,4],[1678,1679,4],[1681,1689,4],[1691,1693,4],[1695,1697,4],[1701,1706,5],
+  [1711,1711,4],[1713,1713,4],[1715,1716,4],[1718,1719,4],[1721,1724,5],[1731,1731,4],[1732,1732,5],[1733,1734,4],[1735,1736,5],[1738,1738,5],[1741,1742,5],[1744,1744,5],[1746,1747,5],[1749,1749,5],
+  [1751,1757,5],[1759,1759,5],[1761,1761,5],[1764,1764,5],[1766,1769,5],[1771,1771,4],[1773,1775,4],[1777,1779,4],[1781,1789,5],[1811,1817,5],[1821,1827,5],[1829,1829,5],[1831,1832,5],[1834,1834,5],
+  [1841,1844,5],[1846,1847,5],[1851,1853,5],[1861,1862,5],[1865,1865,5],[1871,1871,5],[1873,1873,5],[1901,1902,1],[1906,1906,5],[1911,1911,1],[1921,1921,1],[1931,1931,5],[1934,1935,5],[1941,1949,1],
+  [1951,1951,1],[1961,1969,1],[1971,1976,1],[1981,1981,1],[1985,1985,1],[1991,1992,1],[2011,2015,1],[2019,2019,1],[2021,2026,1],[2031,2037,1],[2041,2042,1],[2051,2051,1],[2061,2061,1],[2063,2065,1],
+  [2071,2071,1],[2082,2082,1],[2101,2106,1],[2111,2111,1],[2114,2114,1],[2116,2116,1],[2121,2121,1],[2131,2136,1],[2141,2144,1],[2151,2154,1],[2181,2182,1],[3372,3372,6],[3401,3405,2],[3417,3417,2],
+  [3431,3433,2],[3435,3439,2],[3441,3449,2],[3451,3454,2],[3461,3461,2],[3481,3481,2],[3511,3515,2],[3521,3528,2],[3531,3534,2],[3541,3546,2],[3551,3555,2],[3561,3566,2],[3571,3573,2],[3581,3585,2],
+  [3601,3608,2],[3611,3612,2],[3615,3615,2],[3621,3621,2],[3625,3625,2],[3631,3631,2],[3632,3634,0],[3701,3708,2],[3709,3709,7],[3711,3711,7],[3712,3712,2],[3721,3723,2],[3731,3732,2],[3734,3735,2],
+  [3737,3739,2],[3741,3744,0],[3749,3749,0],[3751,3752,0],[3754,3755,0],[3761,3766,0],[3768,3768,0],[3769,3769,2],[3771,3776,7],[3781,3781,7],[3784,3785,8],[3791,3792,7],[3794,3794,7],[3811,3819,8],
+  [3821,3826,8],[3828,3829,8],[3831,3836,8],[3841,3844,9],[3845,3845,10],[3846,3846,9],[3847,3847,10],[3848,3849,9],[3851,3853,10],[3861,3864,8],[3871,3871,8],[3881,3882,10],[3886,3886,10],[3888,3888,10],
+  [3891,3897,3],[3898,3898,9],[3899,3899,3],[3901,3907,7],[3911,3912,7],[3921,3922,7],[3925,3925,7],[3927,3927,7],[3931,3931,7],[3941,3941,7],[3945,3945,7],[3947,3947,7],[3951,3951,7],[3953,3953,7],
+  [3956,3956,7],[3958,3959,7],[3961,3962,7],[3971,3972,7],[3981,3981,2],[3984,3985,7],[3991,3995,2],[3997,3997,7],[4251,4251,6],[4254,4255,6],[4261,4261,6],[4264,4269,6],[4271,4271,6],[4273,4273,6],
+  [4281,4281,6],[4283,4288,6],[4331,4339,11],[4341,4341,11],[4351,4354,11],[4356,4357,11],[4361,4361,11],[4363,4365,11],[4371,4371,11],[4373,4374,11],[4381,4389,11],[4421,4421,11],[4431,4431,11],[4433,4438,11],
+  [4441,4441,11],[4443,4444,11],[4451,4451,11],[4453,4456,11],[4458,4458,11],[4461,4465,11],[4471,4472,11],[4474,4475,11],[4481,4482,11],[4484,4486,11],[4491,4491,11],[4493,4494,11],[4501,4501,11],[4503,4508,11],
+  [4511,4511,11],[4513,4513,11],[4515,4515,11],[4521,4522,11],[4524,4525,11],[4527,4529,11],[4531,4533,11],[4535,4539,11],[4541,4543,11],[4551,4551,11],[4553,4554,11],[4561,4562,11],[4564,4569,11],[4571,4571,11],
+  [4574,4576,11],[4581,4581,11],[4583,4589,11],[4611,4617,6],[4621,4625,6],[4631,4631,6],[4634,4635,6],[4641,4641,6],[4651,4652,6],[4655,4655,6],[4661,4661,6],[4664,4664,6],[4671,4671,6],[4675,4675,6],
+  [4681,4681,6],[4691,4691,6],[4693,4698,6],[4701,4709,6],[4711,4711,6],[4714,4715,6],[4721,4722,6],[4724,4727,6],[4731,4731,6],[4735,4735,6],[4741,4741,6],[4744,4744,6],[4751,4751,6],[4754,4754,6],
+  [4756,4756,6],[4758,4759,6],[4761,4762,6],[4765,4766,6],[4771,4772,6],[4781,4782,6],[4791,4791,6],[4793,4794,6],[4796,4797,6],[4811,4819,6],[4822,4827,6],[4834,4839,6],[4841,4841,6],[4844,4845,6],
+  [4847,4847,6],[4849,4849,6],[4851,4851,6],[4854,4856,6],[4858,4859,6],[4861,4861,6],[4871,4879,6],[4881,4882,6],[4884,4885,6],[4891,4891,6],[4901,4909,6],[4911,4911,6],[4921,4921,6],[4924,4924,6],
+  [4926,4927,6],[4931,4931,6],[4941,4942,6],[4944,4944,6],[5011,5015,6],[5017,5018,6],[5021,5022,6],[5025,5026,6],[5032,5032,6],[5035,5038,6],[5041,5049,6],[5051,5053,6],[5056,5057,6],[5059,5059,6],
+  [5061,5063,6],[5066,5066,6],[5071,5071,6],[5074,5074,6],[5076,5076,6],[5081,5081,6],[5084,5084,6],[5085,5085,12],[5087,5087,12],[5089,5089,6],[5091,5091,12],[5094,5096,12],[5101,5107,6],[5109,5109,6],
+  [5111,5111,6],[5113,5113,6],[5121,5122,6],[5124,5126,6],[5131,5131,6],[5133,5133,6],[5141,5146,6],[5151,5152,6],[5154,5154,6],[5156,5158,6],[5161,5161,6],[5165,5165,6],[5171,5172,6],[5175,5176,6],
+  [5211,5213,6],[5215,5216,6],[5221,5224,6],[5231,5237,6],[5241,5249,6],[5251,5258,6],[5261,5264,6],[5266,5266,6],[5268,5268,6],[5271,5272,6],[5275,5275,6],[5281,5283,6],[5291,5294,6],[5296,5296,6],
+  [5298,5298,6],[5301,5302,6],[5305,5308,6],[5311,5311,6],[5313,5318,6],[5321,5321,6],[5324,5325,6],[5327,5328,6],[5331,5331,6],[5333,5335,6],[5341,5349,6],[5351,5359,6],[5361,5361,6],[5363,5364,6],
+  [5366,5368,6],[5371,5371,6],[5373,5375,6],[5381,5384,6],[5386,5386,6],[5388,5388,6],[5391,5392,6],[5394,5398,6],[5401,5406,6],[5408,5408,6],[5411,5411,6],[5421,5422,12],[5423,5423,6],[5425,5425,12],
+  [5427,5427,6],[5437,5439,6],[5453,5453,6],[5461,5467,6],[5469,5469,6],[5471,5473,6],[5476,5476,6],[5481,5482,6],[5491,5492,6],[5501,5509,12],[5511,5513,12],[5521,5521,12],[5524,5525,12],[5527,5529,12],
+  [5531,5531,12],[5534,5534,12],[5541,5541,12],[5551,5556,12],[5561,5561,12],[5563,5563,12],[5571,5571,12],[5575,5575,12],[5581,5583,12],[5591,5591,12],[5595,5595,12],[5611,5617,12],[5621,5629,12],[5631,5633,12],
+  [5641,5647,12],[5651,5658,12],[5661,5667,12],[5671,5674,12],[5681,5685,12],[5688,5689,6],[5691,5692,12],[5694,5694,12],[5701,5709,12],[5711,5712,12],[5715,5715,12],[5721,5722,12],[5724,5725,12],[5731,5731,12],
+  [5735,5735,12],[5737,5738,12],[5741,5741,12],[5751,5754,12],[5756,5756,12],[5761,5761,12],[5763,5763,12],[6001,6004,12],[6006,6006,12],[6021,6021,12],[6023,6024,12],[6026,6029,12],[6511,6512,6],[6515,6515,7],
+  [6521,6524,6],[6531,6538,6],[6541,6546,6],[6551,6551,6],[6566,6566,7],[6577,6579,7],[6601,6606,6],[6611,6613,6],[6615,6617,6],[6621,6621,6],[6624,6624,6],[6626,6629,6],[6631,6631,6],[6634,6634,6],
+  [6641,6642,6],[6644,6645,6],[6651,6655,6],[6657,6659,6],[6661,6663,7],[6665,6665,7],[6675,6678,7],[6681,6681,7],[6684,6687,7],[6691,6691,7],[6701,6709,7],[6711,6718,7],[6721,6721,7],[6731,6733,7],
+  [6741,6741,7],[6744,6745,7],[6811,6816,7],[6821,6828,7],[6831,6836,7],[6841,6846,7],[6851,6852,7],[6861,6862,7],[6865,6866,7],[6869,6869,7],[6871,6871,7],[6874,6874,7],[6877,6877,7],[6881,6883,7],
+  [6891,6891,7],[6901,6905,7],[6909,6909,7],[6911,6911,7],[6913,6917,7],[6921,6924,7],[6931,6932,7],[6941,6942,7],[6951,6953,7],[6955,6955,7],[6981,6984,7],[6986,6988,7],[6991,6991,7],[6994,6994,7],
+  [6996,6999,7],[7001,7009,7],[7031,7031,7],[7035,7039,7],[7041,7041,7],[7044,7044,7],[7046,7048,7],[7225,7225,7],[7311,7317,10],[7321,7329,10],[7331,7336,10],[7339,7339,10],[7341,7341,10],[7345,7346,10],
+  [7351,7352,7],[7384,7384,10],[7391,7392,10],[7395,7396,10],[7397,7397,9],[7411,7413,10],[7415,7419,10],[7421,7427,10],[7429,7429,10],[7433,7433,10],[7439,7439,10],[8011,8017,9],[8019,8019,9],[8021,8025,9],
+  [8031,8034,9],[8041,8043,9],[8051,8052,9],[8071,8072,9],[8075,8076,10],[8077,8077,9],[8079,8079,9],[8081,8082,9],[8084,8085,9],[8091,8091,9],[8094,8097,9],[8161,8162,9],[8166,8167,9],[8171,8172,9],
+  [8181,8181,9],[8191,8191,9],[8193,8194,9],[8196,8196,9],[8198,8198,9],[8211,8212,3],[8218,8218,3],[8219,8219,9],[8222,8226,3],[8231,8233,3],[8239,8239,3],[8241,8245,3],[8251,8256,9],[8265,8266,9],
+  [8274,8276,9],[8278,8278,9]
+] as const;
+
+function normalizePc4(input: string): string | null {
+  if (!input) return null;
+  const m = String(input).match(/\d{4}/);
+  return m ? m[0] : null;
 }
 
-function norm(s) {
-  return String(s || "")
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/\b(gmbh|kg|ug|ag|bvba|nv|sprl|bv|bvb|sarl|sa|co|und|&|kfz|abschleppdienst|abschlepp|bergung|depannage|takeldienst)\b/g, " ")
-    .replace(/[^a-z0-9]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
+export function lookupBerger(postcode: string): BergerLookupResult | null {
+  const pc4 = normalizePc4(postcode);
+  if (!pc4) return null;
 
-function pad5(n) {
-  const s = String(n);
-  return s.length >= 5 ? s : "0".repeat(5 - s.length) + s;
-}
+  const n = Number(pc4);
+  if (!Number.isFinite(n)) return null;
 
-function extractDigits(s) {
-  return (s.match(/\d+/g) || []).join("");
-}
-
-function cleanInput(raw) {
-  return String(raw || "").trim().toUpperCase();
-}
-
-function detectCountryFromInput(raw) {
-  const s = cleanInput(raw);
-  const digits = extractDigits(s);
-
-  // NL: often "1234AB" or "1234 AB"
-  const nlLike = /^\d{4}\s*[A-Z]{2}$/.test(s.replace(/\s+/g,""));
-  if (nlLike) return "NL";
-
-  // DE: 5 digits
-  if (/^\d{5}$/.test(digits) && digits.length === 5) return "DE";
-
-  // Ambiguous 4-digit -> keep user selection
-  if (/^\d{4}$/.test(digits) && digits.length === 4) return null;
-
-  return null;
-}
-
-function parsePostcode(raw, country) {
-  const s = cleanInput(raw);
-  const digits = extractDigits(s);
-
-  if (country === "DE") {
-    const pc5 = (digits.length >= 5 ? digits.slice(0,5) : digits).padStart(5, "0");
-    const num = Number(pc5); // leading zeros are fine
-    return { pcStr: pc5, pcNum: num };
-  }
-
-  if (country === "BE") {
-    const pc4 = digits.slice(0,4);
-    const num = Number(pc4);
-    return { pcStr: pc4, pcNum: num };
-  }
-
-  // NL: accept 4 digits or full 6-char (1234AB). We look up by PC4.
-  const pc4 = digits.slice(0,4);
-  const num = Number(pc4);
-  const pc6 = (s.replace(/\s+/g,"").match(/^\d{4}[A-Z]{2}$/) || [])[0] || null;
-  return { pcStr: pc6 || pc4, pcNum: num };
-}
-
-function lookupByRanges(pcNum, ranges, values) {
-  // ranges: [[start,end,idx], ...] sorted by start
+  // Binary search in sorted ranges
   let lo = 0;
-  let hi = ranges.length - 1;
+  let hi = RANGES.length - 1;
+
   while (lo <= hi) {
     const mid = (lo + hi) >> 1;
-    const [a,b,idx] = ranges[mid];
-    if (pcNum < a) hi = mid - 1;
-    else if (pcNum > b) lo = mid + 1;
-    else return { idx, value: values[idx], matched: true };
-  }
-  return { idx: null, value: null, matched: false };
-}
+    const [start, end, idx] = RANGES[mid];
 
-function lookupDE(pcNum) {
-  for (const b of DE_BERGERS) {
-    for (const [a,c] of b.ranges) {
-      if (pcNum >= a && pcNum <= c) return { berger: b, matched: true };
+    if (n < start) hi = mid - 1;
+    else if (n > end) lo = mid + 1;
+    else {
+      const [regio, primary, backup] = VALUES[idx];
+      return { pc4, regio, primary, backup };
     }
-  }
-  return { berger: null, matched: false };
-}
-
-function getAddressFromBook(country, bergerName) {
-  if (!bergerName) return null;
-
-  if (country === "BE") {
-    // direct, alias, fuzzy
-    const direct = ADDRESS_BE[bergerName];
-    if (direct) return direct;
-
-    const aliasKey = BE_ALIAS[bergerName];
-    if (aliasKey && ADDRESS_BE[aliasKey]) return ADDRESS_BE[aliasKey];
-
-    const n = norm(bergerName);
-    let best = null;
-    let bestScore = 1e9;
-    for (const key of Object.keys(ADDRESS_BE)) {
-      const nk = norm(key);
-      if (!nk) continue;
-      if (nk === n || nk.includes(n) || n.includes(nk)) {
-        const score = Math.abs(nk.length - n.length);
-        if (score < bestScore) {
-          bestScore = score;
-          best = ADDRESS_BE[key];
-        }
-      }
-    }
-    return best;
-  }
-
-  if (country === "DE") {
-    // direct, fuzzy
-    const direct = ADDRESS_DE[bergerName];
-    if (direct) return direct;
-
-    const n = norm(bergerName);
-    let best = null;
-    let bestScore = 1e9;
-    for (const key of Object.keys(ADDRESS_DE)) {
-      const nk = norm(key);
-      if (!nk) continue;
-      if (nk === n || nk.includes(n) || n.includes(nk)) {
-        const score = Math.abs(nk.length - n.length);
-        if (score < bestScore) {
-          bestScore = score;
-          best = ADDRESS_DE[key];
-        }
-      }
-    }
-    return best;
   }
 
   return null;
 }
 
-function buildMapsQuery(country, pcStr, addressObj, standplaats) {
-  const parts = [];
-  if (addressObj && addressObj.address) parts.push(addressObj.address);
-  if (addressObj && addressObj.city) parts.push(addressObj.city);
-  if (parts.length === 0 && standplaats) parts.push(standplaats);
-  if (parts.length === 0 && pcStr) parts.push(pcStr);
-  if (country) parts.push(country === "NL" ? "Netherlands" : (country === "BE" ? "Belgium" : "Germany"));
-  return parts.join(", ");
-}
+export type BergerByPostcode = {
+  berger: string;
+  regio: string;
+  backup?: string;
+  isWisselgebied?: boolean;
+};
 
-// --------------------
-// Lookup (core)
-// --------------------
-function getBerger(rawPostcode, country) {
-  const parsed = parsePostcode(rawPostcode, country);
-  const pcStr = parsed.pcStr;
-  const pcNum = parsed.pcNum;
+// Wrapper that matches the shape used in your intake wizard
+export function getBergerByPostcode(postcode: string): BergerByPostcode | null {
+  const r = lookupBerger(postcode);
+  if (!r) return null;
 
-  if (!pcStr || !pcNum || Number.isNaN(pcNum)) {
-    return {
-      country,
-      input: rawPostcode,
-      pcStr,
-      matched: false,
-      method: "invalid",
-      error: "Onleesbare postcode.",
-    };
-  }
-
-  if (country === "NL") {
-    const hit = lookupByRanges(pcNum, RANGES_NL, VALUES_NL);
-    if (hit.matched) {
-      const gebied = hit.value[0];
-      const primary = hit.value[1];
-      const backup = hit.value[2];
-      return {
-        country,
-        pcStr,
-        matched: true,
-        method: "range",
-        berger: {
-          name: primary,
-          company: primary,
-          phone: null,
-          standplaats: null,
-          extra: { gebied, backup },
-        },
-      };
-    }
-
-    const fb = FALLBACK_BY_COUNTRY.NL;
-    return {
-      country,
-      pcStr,
-      matched: false,
-      method: "fallback-default",
-      berger: {
-        name: fb.name,
-        company: fb.company,
-        phone: null,
-        standplaats: null,
-        extra: { gebied: null, backup: null },
-      },
-    };
-  }
-
-  if (country === "BE") {
-    const hit = lookupByRanges(pcNum, RANGES_BE, VALUES_BE);
-    if (hit.matched) {
-      const name = hit.value[1];
-      const phone = hit.value[2];
-      return {
-        country,
-        pcStr,
-        matched: true,
-        method: "range",
-        berger: {
-          name,
-          company: name,
-          phone: phone || null,
-          standplaats: null,
-          extra: {},
-        },
-      };
-    }
-
-    const fb = FALLBACK_BY_COUNTRY.BE;
-    return {
-      country,
-      pcStr,
-      matched: false,
-      method: "fallback-default",
-      berger: {
-        name: fb.name,
-        company: fb.company,
-        phone: null,
-        standplaats: null,
-        extra: {},
-      },
-    };
-  }
-
-  // DE
-  const hit = lookupDE(pcNum);
-  if (hit.matched) {
-    return {
-      country,
-      pcStr,
-      matched: true,
-      method: "range",
-      berger: {
-        name: hit.berger.name,
-        company: hit.berger.name,
-        phone: hit.berger.phone || null,
-        standplaats: hit.berger.standplaats || null,
-        extra: {},
-      },
-    };
-  }
-
-  const fb = FALLBACK_BY_COUNTRY.DE;
   return {
-    country,
-    pcStr,
-    matched: false,
-    method: "fallback-default",
-    berger: {
-      name: fb.name,
-      company: fb.company,
-      phone: null,
-      standplaats: null,
-      extra: {},
-    },
+    berger: r.primary,
+    regio: r.regio,
+    backup: r.backup ?? undefined,
+    isWisselgebied: !!r.backup,
   };
 }
+// ==============================
+// BE/DE KML zones (from your KML)
+// ==============================
 
-// --------------------
-// Map (Leaflet + Nominatim)
-// --------------------
-let map = null;
-let marker = null;
-let lastMapQuery = null;
+export type CountryCode = "NL" | "BE" | "DE";
 
-function ensureMap() {
-  if (map) return map;
+export type KmlArea = {
+  name: string;
+  bbox: [number, number, number, number]; // [minLon, minLat, maxLon, maxLat]
+  centroid: [number, number];
+  area: number;
+  ring: [number, number][];
+};
 
-  map = L.map("map", {
-    zoomControl: true,
-    scrollWheelZoom: false,
-  }).setView([52.1, 5.3], 6);
+export const KML_AREAS: KmlArea[] = [{"name":"Lybaert","bbox":[3.426908,50.972207,3.89932,51.300689],"centroid":[3.620886,51.166597],"area":0.09146908,"ring":[[3.431717,51.175842],[3.744827,50.972207],[3.838895,50.985354],[3.89932,51.025105],[3.792203,51.250861],[3.59445,51.300689],[3.514799,51.286949],[3.534025,51.249142],[3.426908,51.243984],[3.431717,51.175842]]},{"name":"MCT Verheye Depannage","bbox":[3.114356,50.820574,3.744827,51.175842],"centroid":[3.396213,51.005607],"area":0.10785061,"ring":[[3.114356,51.029705],[3.575808,50.820574],[3.744827,50.972207],[3.431717,51.175842],[3.114356,51.029705]]},{"name":"Vercauteren","bbox":[3.821425,50.98966,4.401008,51.349237],"centroid":[4.057375,51.162347],"area":0.12121817,"ring":[[3.821425,51.215224],[3.907527,51.029411],[3.847096,50.98966],[4.350191,51.062699],[4.401008,51.196294],[4.241691,51.349237],[4.06864,51.241027],[3.821425,51.215224]]},{"name":"Bayards depannage","bbox":[5.542311,50.384382,6.272902,50.778529],"centroid":[5.861492,50.635309],"area":0.16739853,"ring":[[5.542311,50.461377],[5.657667,50.384382],[6.185011,50.564424],[6.272902,50.630674],[6.234449,50.642868],[6.174025,50.621963],[6.10536,50.714226],[6.031202,50.724659],[6.003736,50.755946],[5.808729,50.754208],[5.778517,50.778529],[5.685221,50.757206],[5.631662,50.663939],[5.578765,50.645979],[5.552011,50.603183],[5.542311,50.461377]]},{"name":"Cronos Depannage","bbox":[4.898325,50.442534,5.690714,50.860389],"centroid":[5.450482,50.680916],"area":0.18986519,"ring":[[4.898325,50.665027],[4.962522,50.528126],[5.552011,50.442534],[5.552011,50.603183],[5.578765,50.645979],[5.631662,50.663939],[5.665281,50.708836],[5.685221,50.757206],[5.690714,50.807566],[5.653635,50.823184],[5.637307,50.860389],[4.898325,50.665027]]},{"name":"Josef Eichenseher","bbox":[10.988995,47.891125,11.967361,48.252669],"centroid":[11.532186,48.012334],"area":0.20540926,"ring":[[11.967361,47.938987],[11.651504,48.252669],[10.988995,48.0399],[11.085708,47.891125],[11.967361,47.938987]]},{"name":"Depannage Saint Jean (Frans) Bij nood","bbox":[3.686405,50.307849,4.630881,50.601631],"centroid":[4.070361,50.443531],"area":0.20932065,"ring":[[4.054099,50.601631],[3.686405,50.4214],[3.724509,50.307849],[3.771542,50.349604],[4.035195,50.351356],[4.606162,50.318372],[4.630881,50.596401],[4.054099,50.601631]]},{"name":"VDC depannage","bbox":[4.238808,50.991838,5.136393,51.508724],"centroid":[4.671232,51.353816],"area":0.2137329,"ring":[[4.238808,51.353549],[4.39814,51.200606],[4.347319,51.067011],[4.617378,50.991838],[4.701241,51.179251],[4.873988,51.297839],[5.136393,51.303877],[5.069995,51.391],[5.094367,51.427655],[5.037858,51.478492],[4.92645,51.409449],[4.84129,51.430006],[4.849531,51.489913],[4.772612,51.508724],[4.673717,51.430006],[4.544603,51.433431],[4.550097,51.488202],[4.388018,51.453978],[4.442961,51.373451],[4.352307,51.368306],[4.238808,51.353549]]},{"name":"Peters Eschweiler","bbox":[6.01874,50.630674,6.900393,51.047278],"centroid":[6.294953,50.907396],"area":0.22424773,"ring":[[6.01874,51.047278],[6.02698,50.986804],[6.106631,50.931444],[6.068178,50.84828],[6.272902,50.630674],[6.900393,50.747592],[6.708132,50.912398],[6.533879,51.014814],[6.01874,51.047278]]},{"name":"choffray depannage","bbox":[5.657667,49.962202,6.407484,50.564424],"centroid":[6.044289,50.266782],"area":0.24027252,"ring":[[5.657667,50.384382],[5.6714,49.999292],[5.794996,49.962202],[5.830702,49.981634],[5.816969,50.024002],[5.869154,50.041645],[5.962538,50.171999],[6.149305,50.156164],[6.308607,50.321292],[6.358046,50.312523],[6.407484,50.3248],[6.336073,50.377376],[6.338819,50.491092],[6.234449,50.503322],[6.174025,50.534756],[6.185011,50.564424],[5.657667,50.384382]]},{"name":"Winkelmann","bbox":[8.433478,52.043238,9.01026,52.670056],"centroid":[8.729252,52.426597],"area":0.24489562,"ring":[[8.559821,52.608369],[8.433478,52.101765],[8.862716,52.043238],[9.01026,52.407765],[8.881171,52.546614],[8.797496,52.670056],[8.559821,52.608369]]},{"name":"Andreas Hagen","bbox":[7.82467,51.738388,8.862716,52.127625],"centroid":[8.410879,51.957001],"area":0.26986092,"ring":[[8.862716,52.043238],[8.241988,52.127625],[7.82467,51.981449],[7.990523,51.808068],[8.682662,51.738388],[8.862716,52.043238]]},{"name":"Klotzbach","bbox":[6.897716,51.123581,7.909168,51.706681],"centroid":[7.340166,51.504908],"area":0.28319284,"ring":[[7.20055,51.706681],[7.205333,51.54403],[6.897716,51.52011],[7.213155,51.41571],[7.317525,51.123581],[7.909168,51.395852],[7.777332,51.626615],[7.20055,51.706681]]},{"name":"Krampe","bbox":[5.977611,51.52011,7.205333,51.897936],"centroid":[6.467006,51.706193],"area":0.28514658,"ring":[[6.109447,51.627652],[6.182332,51.682874],[6.459073,51.66631],[6.897716,51.52011],[7.205333,51.54403],[7.19984,51.847063],[6.378612,51.83179],[6.150645,51.897936],[5.977611,51.816511],[6.109447,51.627652]]},{"name":"rigra","bbox":[12.007841,47.461378,13.087248,48.034448],"centroid":[12.599211,47.801227],"area":0.29251481,"ring":[[12.476316,47.970073],[12.007841,47.922641],[12.158903,47.705921],[12.779631,47.663394],[13.007597,47.461378],[13.087248,47.681888],[12.799837,48.034448],[12.476316,47.970073]]},{"name":"Schwientek & sohn","bbox":[6.533879,50.747592,7.490908,51.281914],"centroid":[6.965772,51.051012],"area":0.29411284,"ring":[[6.533879,51.014814],[6.900393,50.747592],[7.490908,50.874284],[7.259856,51.281914],[7.116722,51.207091],[6.924764,51.216576],[6.533879,51.014814]]},{"name":"Helmut Vorleitner","bbox":[11.522475,47.929996,12.799837,48.431395],"centroid":[12.101101,48.108425],"area":0.33641159,"ring":[[12.001753,47.929996],[12.799837,48.034448],[12.179685,48.431395],[11.522475,48.216288],[12.001753,47.929996]]},{"name":"Wehner Motors","bbox":[9.084307,50.328591,10.724015,50.695808],"centroid":[9.93228,50.541809],"area":0.43294392,"ring":[[10.262164,50.695808],[9.084307,50.635707],[9.328751,50.328591],[10.724015,50.353132],[10.262164,50.695808]]},{"name":"DeGrave Middelkerke","bbox":[1.816726,50.581763,3.431717,51.362411],"centroid":[2.910618,51.087535],"area":0.50005053,"ring":[[2.166498,50.581763],[3.431717,51.175842],[3.426908,51.243984],[3.370132,51.275679],[3.350142,51.311784],[3.36207,51.362411],[3.104873,51.296219],[1.816726,50.958369],[2.166498,50.581763]]},{"name":"Hamse Sleepdienst","bbox":[4.617378,50.665813,5.862527,51.315836],"centroid":[5.231439,51.138315],"area":0.50200797,"ring":[[4.617378,50.991838],[4.773969,50.94517],[4.906716,50.665813],[5.637307,50.860389],[5.862527,51.143846],[5.832314,51.164519],[5.785622,51.150738],[5.571389,51.226481],[5.497231,51.293514],[5.447793,51.25915],[5.228066,51.262588],[5.239053,51.298666],[5.206094,51.315836],[5.136393,51.303877],[4.873988,51.297839],[4.701241,51.179251],[4.617378,50.991838]]},{"name":"Broker","bbox":[6.001876,51.014814,7.259856,51.684595],"centroid":[6.509239,51.320193],"area":0.50651281,"ring":[[6.001876,51.045936],[6.533879,51.014814],[6.924764,51.216576],[7.116722,51.207091],[7.259856,51.281914],[7.213155,51.41571],[6.87902,51.521834],[6.450814,51.668031],[6.174062,51.684595],[6.095263,51.619113],[6.232597,51.400299],[6.078783,51.20109],[6.166677,51.159767],[6.001876,51.045936]]},{"name":"Dietrich","bbox":[7.317525,50.457483,8.527201,51.395852],"centroid":[8.028855,50.856024],"area":0.53105372,"ring":[[8.527201,50.593422],[8.031722,51.111589],[7.909168,51.395852],[7.317525,51.123581],[7.602367,50.716818],[8.286797,50.457483],[8.527201,50.593422]]},{"name":"Gunster","bbox":[6.900393,50.058555,8.286797,50.874284],"centroid":[7.662422,50.552036],"area":0.53816214,"ring":[[8.286797,50.457483],[7.602367,50.716818],[7.490908,50.874284],[6.900393,50.747592],[7.407272,50.058555],[8.286797,50.457483]]},{"name":"Bott","bbox":[7.407272,49.461013,8.513017,50.341983],"centroid":[7.898558,49.784525],"area":0.53869509,"ring":[[7.782427,49.461013],[8.513017,49.600059],[8.007646,50.341983],[7.407272,50.058555],[7.782427,49.461013]]},{"name":"schmidt","bbox":[8.797496,52.043238,9.751901,52.763211],"centroid":[9.258567,52.392565],"area":0.54252686,"ring":[[9.751901,52.057715],[9.628239,52.763211],[9.007456,52.748255],[8.797496,52.670056],[9.01026,52.407765],[8.862716,52.043238],[9.751901,52.057715]]},{"name":"kruger","bbox":[7.635553,51.111589,8.869429,51.882504],"centroid":[8.046424,51.599039],"area":0.60749651,"ring":[[7.777332,51.626615],[8.031722,51.111589],[8.869429,51.1564],[8.682662,51.738388],[7.990523,51.808068],[7.917863,51.882504],[7.735398,51.787103],[7.635553,51.654067],[7.777332,51.626615]]},{"name":"Benke","bbox":[10.40239,51.22231,11.454036,51.914529],"centroid":[10.750255,51.578946],"area":0.61088517,"ring":[[10.492877,51.571311],[10.40239,51.242948],[11.410386,51.22231],[11.454036,51.818649],[10.498244,51.914529],[10.500972,51.711561],[10.492877,51.571311]]},{"name":"Stickelbroeck","bbox":[7.466681,52.054501,8.559821,52.805079],"centroid":[8.042566,52.31927],"area":0.63353174,"ring":[[8.03797,52.054501],[8.241988,52.127625],[8.433478,52.101765],[8.559821,52.608369],[8.062982,52.805079],[7.49964,52.656711],[7.466681,52.145609],[8.03797,52.054501]]},{"name":"Potsdam Nord","bbox":[12.629592,51.700553,13.736745,52.647134],"centroid":[12.989682,52.316711],"area":0.64351718,"ring":[[12.629592,52.647134],[12.69551,51.700553],[13.736745,52.035754],[13.256973,52.55298],[12.629592,52.647134]]},{"name":"carcomplete 24","bbox":[10.262164,50.520354,11.459824,51.242948],"centroid":[10.759879,50.832004],"area":0.65514473,"ring":[[10.512254,50.520354],[11.459824,50.790253],[11.410386,51.22231],[10.40239,51.242948],[10.262164,50.695808],[10.512254,50.520354]]},{"name":"Florke","bbox":[9.628239,51.905424,10.713463,52.763211],"centroid":[10.039806,52.434251],"area":0.67727055,"ring":[[9.628239,52.763211],[9.751901,52.057715],[10.477187,51.905424],[10.713463,52.681694],[9.628239,52.763211]]},{"name":"Auto-Schafer GmbH","bbox":[8.031722,50.593422,10.262164,51.1564],"centroid":[8.744448,50.933762],"area":0.69899084,"ring":[[8.031722,51.111589],[8.527201,50.593422],[10.262164,50.695808],[8.869429,51.1564],[8.031722,51.111589]]},{"name":"Geen vaste berger","bbox":[4.875587,49.50776,5.877394,50.528126],"centroid":[5.409375,50.062095],"area":0.70637641,"ring":[[4.962522,50.528126],[4.875587,50.156441],[4.899611,49.792285],[5.514845,49.50776],[5.877394,49.564798],[5.734572,49.817102],[5.794996,49.962202],[5.6714,49.999292],[5.657667,50.384382],[5.552011,50.442534],[4.962522,50.528126]]},{"name":"Lenz","bbox":[6.149305,49.80751,7.407272,50.747592],"centroid":[6.715297,50.253082],"area":0.71204488,"ring":[[7.407272,50.058555],[6.900393,50.747592],[6.272902,50.630674],[6.358046,50.312523],[6.149305,50.156164],[6.511886,49.80751],[7.407272,50.058555]]},{"name":"Hofmeister","bbox":[11.728358,48.431395,13.031126,49.548743],"centroid":[12.182626,49.06285],"area":0.74098142,"ring":[[11.728358,49.244453],[12.179685,48.431395],[13.031126,48.845205],[12.245603,49.548743],[11.728358,49.244453]]},{"name":"Van Looy","bbox":[2.166498,50.203367,3.953801,51.029705],"centroid":[3.072036,50.587106],"area":0.76297641,"ring":[[2.166498,50.581763],[3.281913,50.203367],[3.749148,50.46676],[3.953801,50.65928],[3.114356,51.029705],[2.166498,50.581763]]},{"name":"Swientek & Glaser","bbox":[11.410386,50.943373,12.69551,51.836906],"centroid":[11.854176,51.351564],"area":0.78091811,"ring":[[11.410386,51.22231],[11.726486,51.183931],[12.424965,50.943373],[12.69551,51.700553],[11.457321,51.836906],[11.410386,51.22231]]},{"name":"Josef Fasold","bbox":[10.798242,48.0399,12.179685,49.244453],"centroid":[11.484727,48.680294],"area":0.83566015,"ring":[[11.728358,49.244453],[10.798242,48.441267],[10.988995,48.0399],[12.179685,48.431395],[11.728358,49.244453]]},{"name":"Kaufmann spezialfahrzeuge","bbox":[13.256973,51.895143,14.712661,52.827665],"centroid":[13.953085,52.412096],"area":0.86972678,"ring":[[13.256973,52.55298],[13.736745,52.035754],[14.712661,51.895143],[14.619278,52.608055],[14.135879,52.827665],[13.256973,52.55298]]},{"name":"Bissinger","bbox":[7.738481,48.30531,8.859087,49.600059],"centroid":[8.162142,48.932138],"area":0.88395012,"ring":[[7.738481,48.411162],[8.463579,48.30531],[8.859087,49.239307],[8.513017,49.600059],[7.782427,49.461013],[7.969194,49.0559],[8.232866,48.973193],[7.738481,48.411162]]},{"name":"Gerd Muller/Schleppi Bjorn","bbox":[6.403642,49.0559,7.969194,50.058555],"centroid":[7.103176,49.471898],"area":0.91270934,"ring":[[7.407272,50.058555],[6.511886,49.80751],[6.403642,49.514539],[6.705767,49.221214],[6.985918,49.21045],[7.123247,49.14222],[7.414385,49.178142],[7.969194,49.0559],[7.407272,50.058555]]},{"name":"Meyer","bbox":[8.007646,49.600059,9.328751,50.635707],"centroid":[8.73706,50.112774],"area":0.97432914,"ring":[[8.513017,49.600059],[9.221636,49.689139],[9.328751,50.328591],[9.084307,50.635707],[8.491045,50.59388],[8.007646,50.341983],[8.513017,49.600059]]},{"name":"Jan De Plecker","bbox":[3.589589,49.945128,4.962522,51.054871],"centroid":[4.208925,50.483551],"area":1.00400653,"ring":[[4.355665,51.054871],[3.741333,50.969389],[3.589589,50.817053],[3.967553,50.655759],[3.686405,50.4214],[3.711122,50.297001],[3.771542,50.349604],[4.035195,50.351356],[4.169762,50.21974],[4.178006,49.976626],[4.458088,49.945128],[4.710804,49.994284],[4.875587,50.156441],[4.962522,50.528126],[4.773969,50.94517],[4.355665,51.054871]]},{"name":"saller","bbox":[12.179685,48.034448,13.830492,49.345498],"centroid":[13.06228,48.760432],"area":1.01144053,"ring":[[12.659376,48.651755],[12.179685,48.431395],[12.799837,48.034448],[13.439405,48.551859],[13.712579,48.527847],[13.830492,48.764477],[13.686051,48.886402],[13.497083,48.939433],[12.920301,49.345498],[12.784254,49.34064],[12.578915,48.999679],[12.659376,48.651755]]},{"name":"j. Bauereiss","bbox":[10.429129,48.866774,11.728358,50.087122],"centroid":[10.953208,49.514422],"area":1.01777319,"ring":[[10.429129,49.759969],[10.489559,49.204988],[11.252962,49.230269],[11.237922,48.866774],[11.728358,49.244453],[11.52235,50.087122],[10.536253,49.961829],[10.429129,49.759969]]},{"name":"Janicke","bbox":[11.73038,52.55298,14.389071,53.215844],"centroid":[13.128581,52.834085],"area":1.06324179,"ring":[[12.629592,52.647134],[13.256973,52.55298],[14.135879,52.827665],[14.389071,53.215844],[11.73038,53.113754],[12.629592,52.647134]]},{"name":"Walke","bbox":[8.682662,50.695808,10.492877,51.738388],"centroid":[9.390861,51.382108],"area":1.1843716,"ring":[[8.682662,51.738388],[8.833942,51.166645],[10.262164,50.695808],[10.492877,51.571311],[8.682662,51.738388]]},{"name":"Frohlich","bbox":[12.424965,50.554103,14.990272,51.541723],"centroid":[13.954811,51.051595],"area":1.20757268,"ring":[[13.122597,50.554103],[14.298134,51.064357],[14.803505,50.825544],[14.990272,51.43569],[14.726601,51.541723],[14.149818,51.493868],[12.424965,50.943373],[13.122597,50.554103]]},{"name":"Auge","bbox":[9.16945,49.386623,10.76796,50.353132],"centroid":[10.232485,49.825528],"area":1.22109004,"ring":[[10.460343,49.386623],[10.42095,49.756382],[10.528066,49.958242],[10.76796,49.983686],[10.724015,50.353132],[9.328751,50.328591],[9.16945,49.450945],[10.460343,49.386623]]},{"name":"koopmann","bbox":[8.06831,52.613363,9.966124,53.623884],"centroid":[8.824087,53.039163],"area":1.3342826,"ring":[[8.06831,52.810073],[8.565206,52.613363],[9.007456,52.748255],[9.628239,52.763211],[9.966124,53.003566],[9.383781,53.561932],[8.532239,53.623884],[8.197118,53.418111],[8.06831,52.810073]]},{"name":"Herbold Florian","bbox":[8.463579,48.281786,9.963213,49.689139],"centroid":[9.083685,48.994681],"area":1.35614511,"ring":[[8.463579,48.30531],[9.389081,48.281786],[9.710527,48.651245],[9.963213,49.429026],[9.16945,49.450945],[9.221636,49.689139],[8.513017,49.600059],[8.859087,49.239307],[8.463579,48.30531]]},{"name":"Knaak/Struck","bbox":[8.526862,52.998571,10.835947,54.056614],"centroid":[9.627397,53.62409],"area":1.56912475,"ring":[[8.976511,54.056614],[8.526862,53.61889],[9.378302,53.556937],[9.960577,52.998571],[10.835947,53.061486],[10.73707,54.019517],[8.976511,54.056614]]},{"name":"Holldobler","bbox":[9.394574,47.947745,11.250215,49.40444],"centroid":[10.349877,48.702817],"area":1.72225735,"ring":[[9.394574,48.281786],[10.157076,47.947745],[10.983797,48.028628],[10.798242,48.441267],[11.241813,48.879381],[11.250215,49.226682],[10.486868,49.201401],[10.460343,49.386623],[9.965122,49.40444],[9.71602,48.651245],[9.394574,48.281786]]},{"name":"Brameier","bbox":[10.498244,51.700553,12.69551,52.670037],"centroid":[11.452123,52.320458],"area":1.75728851,"ring":[[10.718634,52.670037],[10.498244,51.914529],[12.69551,51.700553],[12.629592,52.647134],[10.718634,52.670037]]}] as any;
 
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "&copy; OpenStreetMap contributors",
-  }).addTo(map);
+export type BergerAddress = {
+  country: "DE" | "BE";
+  berger: string;
+  bedrijf?: string;
+  adres?: string;
+  plaats?: string;
+};
 
-  return map;
+export const ADDRESS_BOOK: Record<string, BergerAddress[]> = {"andreas hagen":[{"country":"DE","berger":"Andreas Hagen","bedrijf":"Andreas Hagen Abschleppdienst Gütersloh","adres":"Franz-Birkhan-Ring 20, 33330","plaats":"Gütersloh"}],"auge":[{"country":"DE","berger":"Auge","bedrijf":"Augé GmbH Kist | Autovermietung | Abschleppdienst | Kranverleih","adres":"Ringstraße 6, 97270","plaats":"Kist"}],"auto-schafer gmbh":[{"country":"DE","berger":"Auto-Schafer GmbH","bedrijf":"Auto Schäfer GmbH","adres":"Wiesenweg 9, 35096","plaats":"Weimar (Lahn)"}],"benke":[{"country":"DE","berger":"Benke","bedrijf":"Abschleppdienst Auto Benke GmbH","adres":"An d. Zolltafel 3, 06526","plaats":"Sangerhausen"}],"bissinger":[{"country":"DE","berger":"Bissinger","bedrijf":"Auto-Bissinger GmbH","adres":"Philipp-Weber-Straße 4, 75177","plaats":"Pforzheim"}],"bott":[{"country":"DE","berger":"Bott","bedrijf":"Bott Abschleppdienst GmbH","adres":"Seeber-Flur 15, 55545","plaats":"Bad Kreuznach"}],"brameier":[{"country":"DE","berger":"Brameier","bedrijf":"Bergungsdienst Brameier Schopsdorf GmbH","adres":"Industriestraße 7, 39291","plaats":"Schopsdorf"}],"broker":[{"country":"DE","berger":"Broker","bedrijf":"Abschleppdienst Bröker GmbH","adres":"Industriering 29, 41751","plaats":"Viersen"}],"dietrich":[{"country":"DE","berger":"Dietrich","bedrijf":"DIETRICH GmbH","adres":"An der Siegtalbrücke 16, 57080","plaats":"Siegen"}],"florke":[{"country":"DE","berger":"Florke","bedrijf":"Flörke Lehrte","adres":"Daimlerstrasse 15, 31275","plaats":"Lehrte"}],"frohlich":[{"country":"DE","berger":"Frohlich","bedrijf":"Abschleppservice Fröhlich GmbH","adres":"Meißner straße 35, 01723","plaats":"Wilsdruff"}],"gerd muller/schleppi bjorn":[{"country":"DE","berger":"Gerd Muller/Schleppi Bjorn","bedrijf":"Abschleppdienst Gerd Müller GmbH","adres":"Saarbrücker Straße 118, 66424","plaats":"Homburg"}],"gunster":[{"country":"DE","berger":"Gunster","bedrijf":"Autohaus Guenster Koblenz","adres":"Robert-Bosch-Strasse 10, 56070","plaats":"Koblenz"}],"helmut vorleitner":[{"country":"DE","berger":"Helmut Vorleitner","bedrijf":"Helmut Vorleitner e. K. - Autowerkstatt & Abschleppdienst","adres":"Henschelring 5, 85551","plaats":"KIRCHHEIM BEI MÜNCHEN"}],"herbold florian":[{"country":"DE","berger":"Herbold Florian","bedrijf":"Abschlepp- und Bergedienst Florian Herbold e.K.","adres":"Hofgartenstraße 25, 74626","plaats":"BRETZFELD"}],"hofmeister":[{"country":"DE","berger":"Hofmeister","bedrijf":"Hofmeister Abschlepp- und Bergungsdienst GmbH & Co.KG","adres":"Kremser Straße 15, 93055","plaats":"REGENSBURG"}],"holldobler":[{"country":"DE","berger":"Holldobler","bedrijf":"Hölldobler GmbH Leipheim","adres":"Ulmer Strasse 11, 89340","plaats":"LEIPHEIM"}],"janicke":[{"country":"DE","berger":"Janicke","bedrijf":"Jänicke Truck- und Havariedienst GmbH","adres":"Hauptstraße 51, 16727","plaats":"OBERKRÄMER"}],"josef eichenseher":[{"country":"DE","berger":"Josef Eichenseher","bedrijf":"Abschleppdienst Josef Eichenseher","adres":"Muthmannstrasse 10, 80939","plaats":"MÜNCHEN"}],"josef fasold":[{"country":"DE","berger":"Josef Fasold","bedrijf":"Auto Fasold GmbH","adres":"Ostendstraße 1, 86579","plaats":"WAIDHOFEN"}],"kaufmann spezialfahrzeuge":[{"country":"DE","berger":"Kaufmann spezialfahrzeuge","bedrijf":"Abschlepp- & Bergungs- & Pannendienst - Kaufmann & Sohn Spezialfahrzeuge","adres":"Eichenstraße 3, 15537","plaats":"GRÜNHEIDE (MARK)"}],"klotzbach":[{"country":"DE","berger":"Klotzbach","bedrijf":"Klotzbach GmbH","adres":"Karolinenstraße 88, 44793","plaats":"BOCHUM"}],"knaak":[{"country":"DE","berger":"Knaak","bedrijf":"Mobil Service Knaak GmbH","adres":"Siegfriedstraße 8, 22851","plaats":"NORDERSTEDT"}],"struck":[{"country":"DE","berger":"Struck","bedrijf":"Struck Bergung- und Pannendienst","adres":"Rote Brücke 13, 22113","plaats":"HAMBURG"}],"krampe":[{"country":"DE","berger":"Krampe","bedrijf":"Automobile Krampe GmbH & Co. KG","adres":"Alte Ziegelei 4, 48734","plaats":"REKEN"}],"lenz":[{"country":"DE","berger":"Lenz","bedrijf":"Lenz Abschleppdienst Adenau e.K.","adres":"Im Broel 24, 53518","plaats":"ADENAU"}],"meyer":[{"country":"DE","berger":"Meyer","bedrijf":"Abschleppdienst Meyer","adres":"Rodelheimer Landstrasse 53, 60487","plaats":"FRANKFURT AM MAIN"}],"peters eschweiler":[{"country":"DE","berger":"Peters Eschweiler","bedrijf":"Abschleppdienst Peters GmbH","adres":"Grüner Weg 44, 52070","plaats":"AACHEN"}],"potsdam nord":[{"country":"DE","berger":"Potsdam Nord","bedrijf":"RKA Abschleppdienst Potsdam GmbH","adres":"Am Silbergraben 20, 14480","plaats":"POTSDAM"}],"schwientek & sohn":[{"country":"DE","berger":"Schwientek & sohn","bedrijf":"Schwientek & Sohn","adres":"Borsigstraße 12, 51381","plaats":"Leverkusen"}],"stickelbroeck":[{"country":"DE","berger":"Stickelbroeck","bedrijf":"Stickelbroeck Bramsche GmbH","adres":"Igels Sand 12, 49565","plaats":"BRAMSCHE"}],"swientek & glaser":[{"country":"DE","berger":"Swientek & Glaser","bedrijf":"Swientek & Gläser GmbH","adres":"Kleben 8, 06667","plaats":"Weißenfels"}],"walke":[{"country":"DE","berger":"Walke","bedrijf":"Walke KFZ Service GmbH","adres":"In den Neuwiesen 5, 34593","plaats":"Knüllwald"}],"wehner motors":[{"country":"DE","berger":"Wehner Motors","bedrijf":"Wehner-Motors GmbH & Co Kfz-Handel KG","adres":"Doktor-Raabe-Straße 5, 36043","plaats":"Fulda"}],"winkelmann":[{"country":"DE","berger":"Winkelmann","bedrijf":"Winkelmann Autozentrum","adres":"Kutenhauser Dorfstraße 12, 32425","plaats":"Minden"}],"carcomplete 24":[{"country":"DE","berger":"carcomplete 24","bedrijf":"Carcomplete24 GmbH","adres":"Rudolstädter Straße 236, 99098","plaats":"ERFURT"}],"j. bauereiss":[{"country":"DE","berger":"j. Bauereiss","bedrijf":"Autoverleih & Abschleppdienst J.Bauereiß KG","adres":"Werner-von-Siemens-Straße 15, 91413","plaats":"Neustadt an der Aisch"}],"koopmann":[{"country":"DE","berger":"koopmann","bedrijf":"Koopmann Kraftfahrzeuge GmbH&Co.KG","adres":"Adelheider Str. 46 b, 27755","plaats":"Delmenhorst"}],"kruger":[{"country":"DE","berger":"kruger","bedrijf":"Abschleppdienst Gerhard Krüger","adres":"Boschstraße 12, 59609","plaats":"Anröchte"}],"rigra":[{"country":"DE","berger":"rigra","bedrijf":"Rigra GmbH, Abschlepp - und Bergungsdienst","adres":"Traunsteiner Str. 16, 83313","plaats":"Siegsdorf"}],"saller":[{"country":"DE","berger":"saller","bedrijf":"Crane Saller GmbH","adres":"Betriebsstraße 14, 94469","plaats":"Deggendorf"}],"schmidt":[{"country":"DE","berger":"schmidt","bedrijf":"Auto Schmidt Kfz-Meisterbetrieb Bergungsdienst A2 Pkw-Lkw-Bus","adres":"Daimlerstraße 1, 31867","plaats":"Lauenau"}],"garage de plecker-pauwels nv":[{"country":"BE","berger":"Garage De Plecker-Pauwels nv","bedrijf":"Garage De Plecker-Pauwels nv","adres":"Robbroekstraat 11, 1840","plaats":"Londerzeel"}],"depannage / autohandel / kraanverhuur vercauteren & zonen":[{"country":"BE","berger":"Depannage / Autohandel / Kraanverhuur Vercauteren & Zonen","bedrijf":"Depannage / Autohandel / Kraanverhuur Vercauteren & Zonen","adres":"Vossekotstraat 1, 9100","plaats":"Sint-Niklaas"}],"mct verheye depannage":[{"country":"BE","berger":"MCT Verheye Depannage","bedrijf":"MCT Verheye Depannage","adres":"Eekhoutstraat 53, 8755","plaats":"Wingene"}],"depannage van looy":[{"country":"BE","berger":"Depannage Van Looy","bedrijf":"Depannage Van Looy","adres":"Lar Blok Z 7a, 8930","plaats":"Menen"}],"takeldienstvdc":[{"country":"BE","berger":"TakeldienstVDC","bedrijf":"TakeldienstVDC","adres":"Theo Coertjenslaan 17, 2960","plaats":"Brecht"}],"hamse sleepdienst (24u/24u bereikbaar)":[{"country":"BE","berger":"Hamse Sleepdienst (24U/24U BEREIKBAAR)","bedrijf":"Hamse Sleepdienst (24U/24U BEREIKBAAR)","adres":"Kanaalweg 71, 3980","plaats":"Tessenderlo-Ham"}],"garage takelbedrijf degrave bvba 24/24 takeldienst /depannage /recovery":[{"country":"BE","berger":"Garage Takelbedrijf Degrave BVBA 24/24 Takeldienst /Depannage /Recovery","bedrijf":"Garage Takelbedrijf Degrave BVBA 24/24 Takeldienst /Depannage /Recovery","adres":"De Kalkaart 24, 8430","plaats":"Middelkerke"}],"depannage bayards sprl":[{"country":"BE","berger":"DEPANNAGE BAYARDS SPRL","bedrijf":"DEPANNAGE BAYARDS SPRL","adres":"Av. de l'Indépendance 87, 4020","plaats":"Liège"}],"cronos depannage":[{"country":"BE","berger":"Cronos Dépannage","bedrijf":"Cronos Dépannage","adres":"Rue de l'Expansion 4, 4460","plaats":"Grâce-Hollogne"}],"depannage choffray":[{"country":"BE","berger":"Dépannage Choffray","bedrijf":"Dépannage Choffray","adres":"Ville du Bois 173, 6690","plaats":"Vielsalm"}],"bvba depannage lybaert":[{"country":"BE","berger":"bvba Depannage Lybaert","bedrijf":"bvba Depannage Lybaert","adres":"bus 1, Vliegtuiglaan 5, 9000","plaats":"Gent"}],"depannage saint jean":[{"country":"BE","berger":"Depannage Saint Jean","bedrijf":"Depannage Saint Jean","adres":"Rue de Bellecourt 24, 7170","plaats":"Manage"}]} as any;
+
+export function normalizeName(name: string): string {
+  return (name || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
 }
 
-const GEO_CACHE = new Map(); // query -> {lat, lon, display_name}
-async function geocode(query) {
-  if (!query) return null;
-  if (GEO_CACHE.has(query)) return GEO_CACHE.get(query);
-
-  const url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" + encodeURIComponent(query);
-  try {
-    const res = await fetch(url, { headers: { "Accept": "application/json" } });
-    const data = await res.json();
-    if (Array.isArray(data) && data[0]) {
-      const hit = {
-        lat: Number(data[0].lat),
-        lon: Number(data[0].lon),
-        display_name: data[0].display_name,
-      };
-      GEO_CACHE.set(query, hit);
-      return hit;
-    }
-  } catch {
-    // ignore
+export function pointInPolygon(lon: number, lat: number, ring: [number, number][]): boolean {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const xi = ring[i][0], yi = ring[i][1];
+    const xj = ring[j][0], yj = ring[j][1];
+    const denom = (yj - yi) || 1e-12;
+    const intersect = ((yi > lat) !== (yj > lat)) && (lon < ((xj - xi) * (lat - yi)) / denom + xi);
+    if (intersect) inside = !inside;
   }
-  GEO_CACHE.set(query, null);
-  return null;
+  return inside;
 }
 
-async function showOnMap(query, label) {
-  ensureMap();
+export type KmlMatch = {
+  berger: string;
+  method: "KML polygon" | "KML fallback (nearest zone)" | "none";
+};
 
-  if (!query) {
-    setStatus("Geen zoekterm voor kaart.", true);
-    return;
-  }
-
-  lastMapQuery = query;
-  setStatus("Kaart laden…", false);
-
-  const hit = await geocode(query);
-  if (!hit || Number.isNaN(hit.lat) || Number.isNaN(hit.lon)) {
-    setStatus("Kaart: locatie niet gevonden.", true);
-    return;
+export function findBergerByPoint(lon: number, lat: number, useFallbackNearest = true): KmlMatch {
+  // Prefer smallest polygon first (areas list is pre-sorted that way)
+  for (const a of KML_AREAS) {
+    const bb = a.bbox;
+    if (lon < bb[0] || lon > bb[2] || lat < bb[1] || lat > bb[3]) continue;
+    if (pointInPolygon(lon, lat, a.ring)) return { berger: a.name, method: "KML polygon" };
   }
 
-  map.setView([hit.lat, hit.lon], 11);
+  if (!useFallbackNearest) return { berger: "", method: "none" };
 
-  if (marker) marker.remove();
-  marker = L.marker([hit.lat, hit.lon]).addTo(map);
-  marker.bindPopup(label || query).openPopup();
-
-  setStatus("", false);
-}
-
-// --------------------
-// UI
-// --------------------
-const elPostcode = document.getElementById("postcode");
-const elLand = document.getElementById("land");
-const btnZoek = document.getElementById("btnZoek");
-const btnCopy = document.getElementById("btnCopy");
-const btnOpenMaps = document.getElementById("btnOpenMaps");
-const btnRecenter = document.getElementById("btnRecenter");
-const btnSelftest = document.getElementById("btnSelftest");
-
-const elStatus = document.getElementById("status");
-const elAutoHint = document.getElementById("autoHint");
-
-const resultCard = document.getElementById("resultCard");
-const pillLand = document.getElementById("pillLand");
-const pillMatch = document.getElementById("pillMatch");
-const pillMethod = document.getElementById("pillMethod");
-
-const rName = document.getElementById("rName");
-const rCompany = document.getElementById("rCompany");
-const rPhone = document.getElementById("rPhone");
-const rAddress = document.getElementById("rAddress");
-const resultNote = document.getElementById("resultNote");
-
-const progressWrap = document.getElementById("progressWrap");
-const progressBar = document.getElementById("progressBar");
-const progressText = document.getElementById("progressText");
-
-let lastResult = null;
-
-function setStatus(msg, isWarn) {
-  elStatus.textContent = msg || "";
-  elStatus.className = isWarn ? "muted warn" : "muted";
-}
-
-function setProgress(on, pct, text) {
-  progressWrap.style.display = on ? "block" : "none";
-  progressBar.style.width = Math.max(0, Math.min(100, pct || 0)) + "%";
-  progressText.textContent = text || "";
-}
-
-function autoDetectLand() {
-  const det = detectCountryFromInput(elPostcode.value);
-  if (!det) {
-    elAutoHint.textContent = "";
-    return;
-  }
-  elLand.value = det;
-  elAutoHint.textContent = "Land automatisch gezet op " + det + ".";
-}
-
-function formatAddressLine(addressObj) {
-  if (!addressObj) return "—";
-  const parts = [];
-  if (addressObj.address) parts.push(addressObj.address);
-  if (addressObj.city) parts.push(addressObj.city);
-  return parts.length ? parts.join(", ") : "—";
-}
-
-function renderResult(res) {
-  lastResult = res;
-  resultCard.style.display = "block";
-
-  pillLand.textContent = "Land: " + res.country;
-  pillMatch.textContent = res.matched ? "Match: JA" : "Match: NEE";
-  pillMatch.className = "pill " + (res.matched ? "ok" : "warn");
-  pillMethod.textContent = "Methode: " + res.method;
-  pillMethod.className = "pill";
-
-  const b = res.berger;
-  const addressObj = getAddressFromBook(res.country, b && b.name);
-  const displayCompany = (addressObj && addressObj.official) || (b && (b.company || b.name)) || "—";
-  const displayAddress = formatAddressLine(addressObj);
-
-  rName.textContent = (b && b.name) || "—";
-  rCompany.textContent = displayCompany || "—";
-  rPhone.textContent = (b && b.phone) ? String(b.phone) : "—";
-  rAddress.textContent = displayAddress;
-
-  const notes = [];
-  if (res.country === "NL" && b && b.extra && b.extra.gebied) notes.push("Gebied: " + b.extra.gebied);
-  if (res.country === "NL" && b && b.extra && b.extra.backup) notes.push("Backup: " + b.extra.backup);
-  if (!res.matched) notes.push("Let op: deze postcode valt buiten de ingestelde ranges. Er wordt een fallback getoond.");
-  resultNote.textContent = notes.join(" • ");
-
-  const q = buildMapsQuery(res.country, res.pcStr, addressObj, b && b.standplaats);
-  const label = (b && b.name ? b.name : "Berger") + (displayAddress !== "—" ? (" — " + displayAddress) : "");
-  showOnMap(q, label);
-}
-
-function makeCopyText(res) {
-  const b = res.berger;
-  const addressObj = getAddressFromBook(res.country, b && b.name);
-  const company = (addressObj && addressObj.official) || (b && (b.company || b.name)) || "";
-  const address = formatAddressLine(addressObj);
-  const phone = (b && b.phone) ? String(b.phone) : "";
-
-  const lines = [
-    "Land: " + res.country,
-    "Postcode: " + res.pcStr,
-    "Berger: " + (b && b.name ? b.name : ""),
-    company ? ("Bedrijf: " + company) : null,
-    phone ? ("Telefoon: " + phone) : null,
-    address !== "—" ? ("Adres: " + address) : null,
-  ].filter(Boolean);
-
-  return lines.join("\n");
-}
-
-function openExternalMap(res) {
-  const b = res.berger;
-  const addressObj = getAddressFromBook(res.country, b && b.name);
-  const q = buildMapsQuery(res.country, res.pcStr, addressObj, b && b.standplaats);
-  const url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
-  window.open(url, "_blank", "noopener,noreferrer");
-}
-
-btnZoek.addEventListener("click", () => {
-  const country = elLand.value;
-  const res = getBerger(elPostcode.value, country);
-  if (res.error) {
-    setStatus(res.error, true);
-    resultCard.style.display = "none";
-    return;
-  }
-  setStatus("", false);
-  renderResult(res);
-});
-
-elPostcode.addEventListener("input", () => {
-  autoDetectLand();
-});
-
-elPostcode.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") btnZoek.click();
-});
-
-btnCopy.addEventListener("click", async () => {
-  if (!lastResult) return;
-  try {
-    await navigator.clipboard.writeText(makeCopyText(lastResult));
-    setStatus("Gekopieerd.", false);
-    await sleep(900);
-    setStatus("", false);
-  } catch {
-    setStatus("Kopiëren mislukt (browser blokkeert clipboard).", true);
-  }
-});
-
-btnOpenMaps.addEventListener("click", () => {
-  if (!lastResult) return;
-  openExternalMap(lastResult);
-});
-
-btnRecenter.addEventListener("click", () => {
-  if (!lastMapQuery) return;
-  showOnMap(lastMapQuery, null);
-});
-
-// --------------------
-// Self-test
-// --------------------
-async function runSelfTest() {
-  setStatus("", false);
-  setProgress(true, 0, "Self-test gestart…");
-
-  const tests = [
-    { country: "BE", from: 1000, to: 9999, pad: (n) => String(n) },
-    { country: "DE", from: 1000, to: 99999, pad: (n) => pad5(n) },
-  ];
-
-  let total = 0;
-  for (const t of tests) total += (t.to - t.from + 1);
-
-  let done = 0;
-  let missing = 0;
-  let fallback = 0;
-
-  for (const t of tests) {
-    for (let n = t.from; n <= t.to; n++) {
-      const pc = t.pad(n);
-      const res = getBerger(pc, t.country);
-      if (!res || !res.berger || !res.berger.name) missing++;
-      if (!res.matched) fallback++;
-      done++;
-
-      if (done % 2500 === 0) {
-        const pct = (done / total) * 100;
-        const msg = "Bezig… " + done.toLocaleString("nl-NL") + " / " + total.toLocaleString("nl-NL") +
-          " (fallback: " + fallback.toLocaleString("nl-NL") + ", missing: " + missing.toLocaleString("nl-NL") + ")";
-        setProgress(true, pct, msg);
-        await sleep(0);
-      }
+  let best: KmlArea | null = null;
+  let bestD = Infinity;
+  for (const a of KML_AREAS) {
+    const dx = lon - a.centroid[0];
+    const dy = lat - a.centroid[1];
+    const d = dx * dx + dy * dy;
+    if (d < bestD) {
+      bestD = d;
+      best = a;
     }
   }
-
-  const finalMsg = "Klaar. Totaal: " + total.toLocaleString("nl-NL") +
-    " • fallback: " + fallback.toLocaleString("nl-NL") +
-    " • missing: " + missing.toLocaleString("nl-NL");
-  setProgress(true, 100, finalMsg);
-  setStatus(missing === 0 ? "Self-test OK: elke postcode levert een resultaat op." : ("Self-test: er missen resultaten (" + missing + ")."), missing !== 0);
-
-  await sleep(2500);
-  setProgress(false, 0, "");
+  return best ? { berger: best.name, method: "KML fallback (nearest zone)" } : { berger: "", method: "none" };
 }
-
-btnSelftest.addEventListener("click", () => {
-  runSelfTest();
-});
-
-// init map
-ensureMap();
