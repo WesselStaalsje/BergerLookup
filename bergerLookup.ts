@@ -157,6 +157,26 @@ export function normalizeName(name: string): string {
     .toLowerCase();
 }
 
+
+// KML-naam → canonical (voor adresboek/markers) + optionele backup.
+// Speciaal: zwart polygon = Saint Jean (nood) maar primair is De Plecker.
+function canonicalizeKmlBerger(name: string): { primary: string; backup?: string } {
+  const raw = (name || "").toString().trim();
+  if (!raw) return { primary: raw };
+
+  // Alias: polygon heet soms "Jan De Plecker" maar adresboek gebruikt bedrijfsnaam.
+  if (/^Jan\s+De\s+Plecker$/i.test(raw)) {
+    return { primary: "Garage De Plecker-Pauwels nv" };
+  }
+
+  // Zwart polygon: Saint Jean alleen als backup, Plecker primair.
+  if (/^Depannage\s+Saint\s+Jean/i.test(raw)) {
+    return { primary: "Garage De Plecker-Pauwels nv", backup: "Depannage Saint Jean" };
+  }
+
+  return { primary: raw };
+}
+
 export function pointInPolygon(lon: number, lat: number, ring: [number, number][]): boolean {
   let inside = false;
   for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
@@ -171,6 +191,7 @@ export function pointInPolygon(lon: number, lat: number, ring: [number, number][
 
 export type KmlMatch = {
   berger: string;
+  backup?: string;
   method: "KML polygon" | "KML fallback (nearest zone)" | "none";
 };
 
@@ -179,7 +200,10 @@ export function findBergerByPoint(lon: number, lat: number, useFallbackNearest =
   for (const a of KML_AREAS) {
     const bb = a.bbox;
     if (lon < bb[0] || lon > bb[2] || lat < bb[1] || lat > bb[3]) continue;
-    if (pointInPolygon(lon, lat, a.ring)) return { berger: a.name, method: "KML polygon" };
+    if (pointInPolygon(lon, lat, a.ring)) {
+      const mapped = canonicalizeKmlBerger(a.name);
+      return { berger: mapped.primary, backup: mapped.backup || "", method: "KML polygon" };
+    }
   }
 
   if (!useFallbackNearest) return { berger: "", method: "none" };
@@ -195,5 +219,7 @@ export function findBergerByPoint(lon: number, lat: number, useFallbackNearest =
       best = a;
     }
   }
-  return best ? { berger: best.name, method: "KML fallback (nearest zone)" } : { berger: "", method: "none" };
+  if (!best) return { berger: "", method: "none" };
+  const mapped = canonicalizeKmlBerger(best.name);
+  return { berger: mapped.primary, backup: mapped.backup || "", method: "KML fallback (nearest zone)" };
 }

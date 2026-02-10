@@ -46,7 +46,15 @@
     a.link { color:#7db7ff; text-decoration:none; font-size:14px; }
     .small { font-size:12px; color:var(--muted); }
     .sep { height:1px; background:var(--line); margin:10px 0; }
-  </style>
+  
+  /* Custom, very clear map pins (works offline: inline SVG) */
+  .pin-icon { background: transparent !important; border: none !important; }
+  .pin-icon svg { display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,.45)); }
+  .pin-icon.pc svg path { fill: #E53935; stroke: #B71C1C; }
+  .pin-icon.berger svg path { fill: #1E88E5; stroke: #0D47A1; }
+  .pin-icon svg circle { fill: #fff; }
+
+</style>
 </head>
 <body>
   <div class="wrap">
@@ -213,6 +221,26 @@
     if (!str) return "";
     // remove diacritics + lowercase
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase();
+  }
+
+
+  // KML-naam → canonical (voor adresboek/markers) + optionele backup.
+  // Speciaal: zwart polygon = Saint Jean (nood) maar primair is De Plecker.
+  function canonicalizeKmlBerger(name) {
+    const raw = (name || "").toString().trim();
+    if (!raw) return { primary: raw, backup: "" };
+
+    // Alias: polygon heet soms "Jan De Plecker" maar adresboek gebruikt bedrijfsnaam.
+    if (/^Jan\s+De\s+Plecker$/i.test(raw)) {
+      return { primary: "Garage De Plecker-Pauwels nv", backup: "" };
+    }
+
+    // Zwart polygon: Saint Jean alleen als backup, Plecker primair.
+    if (/^Depannage\s+Saint\s+Jean/i.test(raw)) {
+      return { primary: "Garage De Plecker-Pauwels nv", backup: "Depannage Saint Jean" };
+    }
+
+    return { primary: raw, backup: "" };
   }
 
   function normalizePostcodeInput(raw) {
@@ -387,12 +415,14 @@
     const hit = findAreaForPoint(geo.lon, geo.lat) || nearestAreaForPoint(geo.lon, geo.lat);
     if (!hit) throw new Error("Geen KML-gebied gevonden.");
 
+    const mapped = canonicalizeKmlBerger(hit.name);
+
     const out = {
       postcode,
       country,
-      berger: hit.name,
+      berger: mapped.primary,
       regio: "",
-      backup: "",
+      backup: mapped.backup || "",
       isWisselgebied: false,
       method: hit.method,
       geo
@@ -481,8 +511,67 @@
   }
 
   let _map = null;
+
   let _markerPc = null;
+
   let _markerBerger = null;
+
+  let _iconPc = null;
+
+  let _iconBerger = null;
+
+
+  function ensureMapIcons() {
+
+    if (!window.L) return { pc: null, berger: null };
+
+    if (_iconPc && _iconBerger) return { pc: _iconPc, berger: _iconBerger };
+
+
+    const pinSvg = (fill, stroke) =>
+
+      `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="48" viewBox="0 0 32 48" aria-hidden="true">
+
+        <path d="M16 46.5S3 29.8 3 18.4C3 9.9 8.9 3 16 3s13 6.9 13 15.4C29 29.8 16 46.5 16 46.5Z" fill="${fill}" stroke="${stroke}" stroke-width="2"/>
+
+        <circle cx="16" cy="18" r="6.2" fill="#fff"/>
+
+      </svg>`;
+
+
+    _iconPc = L.divIcon({
+
+      className: "pin-icon pc",
+
+      html: pinSvg("#E53935", "#B71C1C"),
+
+      iconSize: [32, 48],
+
+      iconAnchor: [16, 47],
+
+      popupAnchor: [0, -44],
+
+    });
+
+
+    _iconBerger = L.divIcon({
+
+      className: "pin-icon berger",
+
+      html: pinSvg("#1E88E5", "#0D47A1"),
+
+      iconSize: [32, 48],
+
+      iconAnchor: [16, 47],
+
+      popupAnchor: [0, -44],
+
+    });
+
+
+    return { pc: _iconPc, berger: _iconBerger };
+
+  }
 
   function setLeafletIconCdn() {
     if (!window.L) return;
@@ -569,16 +658,17 @@
 
     // Map
     const map = ensureMap();
+  const icons = ensureMapIcons();
     if (!map) return;
 
     map.setView([pcGeo.lat, pcGeo.lon], 9);
 
     if (_markerPc) _markerPc.remove();
-    _markerPc = L.marker([pcGeo.lat, pcGeo.lon]).addTo(map).bindPopup(`Postcode: ${r.postcode}`);
+    _markerPc = L.marker([pcGeo.lat, pcGeo.lon], icons.pc ? { icon: icons.pc } : undefined).addTo(map).bindPopup(`Postcode: ${r.postcode}`);
 
     if (bergerGeo) {
       if (_markerBerger) _markerBerger.remove();
-      _markerBerger = L.marker([bergerGeo.lat, bergerGeo.lon]).addTo(map)
+      _markerBerger = L.marker([bergerGeo.lat, bergerGeo.lon], icons.berger ? { icon: icons.berger } : undefined).addTo(map)
         .bindPopup(`Berger: ${r.berger}`);
       const group = L.featureGroup([_markerPc, _markerBerger]);
       map.fitBounds(group.getBounds().pad(0.25));
